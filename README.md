@@ -43,7 +43,7 @@ labyrinth-game/
 
 1. Clonar el repositorio:
 ```bash
-git clone https://github.com/tu-usuario/labyrinth-game.git
+git clone https://github.com/riofutabac/MazeGame.git
 ```
 
 2. Instalar dependencias:
@@ -89,7 +89,10 @@ Los archivos de producción se generarán en la carpeta `dist/`.
 Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles.
 
 ## 👥 Autores
-- Tu Nombre ([@tu-usuario](https://github.com/tu-usuario))
+- Alexis Lapo ([@riofutabac](https://github.com/riofutabac)))
+- Andres Cantuña ([@riofutabac](https://github.com/riofutabac)))
+- Matias Mejia ([@riofutabac](https://github.com/riofutabac)))
+- Santiago Bejarano ([@riofutabac](https://github.com/riofutabac)))
 
 ## 🙏 Agradecimientos
 - Menciona aquí cualquier recurso, librería o persona que haya contribuido significativamente al proyecto
