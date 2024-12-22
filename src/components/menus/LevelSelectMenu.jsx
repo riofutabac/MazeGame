@@ -29,10 +29,7 @@ function LevelSelectMenu() {
   const navigate = useNavigate();
   const { setLevel } = useGame();
 
-  const handleLevelSelect = (level) => {
-    setLevel(level);
-    navigate('/game');
-  };
+
 
   return (
     <LevelSelectMenuContainer>
