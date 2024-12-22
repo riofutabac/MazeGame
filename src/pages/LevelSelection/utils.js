@@ -1,0 +1,1 @@
+// Funciones o constantes específicas para la selección de nivel

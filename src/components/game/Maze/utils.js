@@ -1,0 +1,1 @@
+// Funciones auxiliares relacionadas con Maze

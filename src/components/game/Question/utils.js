@@ -1,0 +1,1 @@
+// Funciones auxiliares para las preguntas, si las necesitas

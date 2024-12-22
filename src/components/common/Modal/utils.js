@@ -1,0 +1,1 @@
+// Funciones auxiliares para Modal, si las necesitas
