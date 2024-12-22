@@ -1,12 +1,25 @@
-import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home.jsx';
+import Game from './pages/Game';
+import Instructions from './pages/Instructions';
+import Settings from './pages/Settings';
+import LevelSelect from './pages/LevelSelect';
+import { GameProvider } from './contexts/GameContext';
 
 function App() {
   return (
-    <div>
-      <h1>¡Bienvenido al Labyrinth Game!</h1>
-      <p>Este es un proyecto base con React + Vite.</p>
-    </div>
-  )
+    <GameProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/game" element={<Game />} />
+          <Route path="/instructions" element={<Instructions />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/level-select" element={<LevelSelect />} />
+        </Routes>
+      </Router>
+    </GameProvider>
+  );
 }
 
-export default App
+export default App;

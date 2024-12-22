@@ -1,1 +1,0 @@
-// Funciones auxiliares para Button, si las necesitas
