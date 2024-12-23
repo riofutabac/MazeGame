@@ -3,7 +3,7 @@ import Home from './pages/Home.jsx';
 import Game from './pages/Game';
 import Instructions from './pages/Instructions';
 import Settings from './pages/Settings';
-import LevelSelect from './pages/LevelSelect';
+import LevelSelect from './pages/LevelSelect/LevelSelect';
 import { GameProvider } from './contexts/GameContext';
 
 function App() {
