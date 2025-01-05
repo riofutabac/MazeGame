@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home.jsx';
-import Game from './pages/Game';
+import Game from './pages/Game/Game';
 import Instructions from './pages/Instructions';
 import Settings from './pages/Settings';
 import LevelSelect from './pages/LevelSelect/LevelSelect';
