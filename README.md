@@ -73,6 +73,30 @@ npm run build
 ```
 Los archivos se generarán en la carpeta `dist/`
 
+## 📝 Despliegue en Netlify
+
+1. Asegúrate de tener tu código en un repositorio de GitHub
+
+2. En Netlify:
+   - Inicia sesión en [Netlify](https://www.netlify.com/)
+   - Haz clic en "New site from Git"
+   - Selecciona tu repositorio de GitHub
+   - Configura los siguientes valores:
+     - Build command: `npm run build`
+     - Publish directory: `dist`
+   - Haz clic en "Deploy site"
+
+3. Configuraciones adicionales:
+   - En la sección "Build & Deploy" de tu sitio en Netlify:
+     - Verifica que el comando de build sea: `npm run build`
+     - El directorio de publicación sea: `dist`
+
+4. Variables de entorno (si las necesitas):
+   - Ve a Site settings > Build & deploy > Environment
+   - Añade tus variables de entorno necesarias
+
+Los redirects para el manejo de rutas ya están configurados en el archivo `netlify.toml`
+
 ## 📝 Licencia
 Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para detalles.
 
