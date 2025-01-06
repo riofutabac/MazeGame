@@ -9,6 +9,7 @@ import pauseImg from '../../assets/images/pause.webp';
 import settingsImg from '../../assets/images/settings.webp';
 import fullScreenImg from '../../assets/images/expandir.webp';
 import timerImg from '../../assets/images/timer.webp';
+import FinishedGame from './FinishedGame.jsx';
 
 import {
   StyledGame,
@@ -27,6 +28,9 @@ export default function Game() {
   const { level } = useGame();
   const [time, setTime] = useState('00:00');
   const [lives, setLives] = useState(3);
+  const [isGameFinished, setIsGameFinished] = useState(false);
+  const [gameStats, setGameStats] = useState(null);
+
 
   const {
     maze,
@@ -40,6 +44,17 @@ export default function Game() {
 
   useEffect(() => {
     const handleKeyPress = (e) => {
+      if (e.key.toLowerCase() === 'q') { //esto es temporal
+        // Finalizar el juego cuando se presiona 'q'
+        const stats = {
+          time: time,
+          livesLost: 3 - lives, // Calcula vidas perdidas
+          totalScore: score,
+          question: currentQuestion,
+        };
+        setGameStats(stats);
+        setIsGameFinished(true);
+      }
       switch (e.key) {
         case 'ArrowUp': movePlayer('up'); break;
         case 'ArrowDown': movePlayer('down'); break;
@@ -51,14 +66,15 @@ export default function Game() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [movePlayer]);
+  }, [movePlayer, time, lives, score, currentQuestion]);
 
   return (
     <StyledGame>
+      {!isGameFinished  ? (
       <GameBoard>
         <GameHeader>
           <TimerContainer>
-            <img src={timerImg} alt="Botón para abrir la configuración" />
+            <img src={timerImg} alt="Tiempo" />
             <Timer>
               <span>{time}</span>
             </Timer>
@@ -97,11 +113,11 @@ export default function Game() {
         </GameControls>
       </GameBoard>
 
-      {gameOver && (
-        <div className="game-over">
-          <h2>¡Juego terminado!</h2>
-          <button onClick={() => navigate('/')}>Volver al menú</button>
-        </div>
+      ) : (
+        <FinishedGame
+          stats={gameStats}
+          onBackToMenu={() => navigate('/')}
+        />
       )}
     </StyledGame>
   );
