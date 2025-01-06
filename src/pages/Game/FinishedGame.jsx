@@ -1,5 +1,5 @@
 // FinishedGame.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import timerImg from '../../assets/images/timer.webp';
 import iconoAtras from '../../assets/images/arrow.webp';
@@ -22,9 +22,14 @@ import {
   Timer
 } from './FinishedGame.styles';
 
+import ConfigModal from '../../components/modals/ConfigModal';
+import SoundModal from '../../components/modals/SoundModal';
+
 function FinishedGame({ stats }) {
   const navigate = useNavigate();
   const question = stats?.question;
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [isSoundOpen, setIsSoundOpen] = useState(false);
 
   return (
     <LevelSelectContainer>
@@ -34,10 +39,10 @@ function FinishedGame({ stats }) {
         </IconButton>
         <Title>¡Fin del Juego!</Title>
         <NavigationButtons>
-          <IconButton>
+          <IconButton onClick={() => setIsSoundOpen(true)}>
             <img src={iconoSonido} alt="Sonido" />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={() => setIsConfigOpen(true)}>
             <img src={iconoConfig} alt="Configuración" />
           </IconButton>
         </NavigationButtons>
@@ -89,6 +94,15 @@ function FinishedGame({ stats }) {
       <PlayAgainButton onClick={() => navigate('/level-select')}>
         Jugar de nuevo
       </PlayAgainButton>
+
+      <ConfigModal 
+        isOpen={isConfigOpen} 
+        onClose={() => setIsConfigOpen(false)} 
+      />
+      <SoundModal 
+        isOpen={isSoundOpen} 
+        onClose={() => setIsSoundOpen(false)} 
+      />
     </LevelSelectContainer>
   );
 }
