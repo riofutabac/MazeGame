@@ -1,11 +1,13 @@
 // LevelSelect.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGame } from '../../contexts/GameContext';
 import imagenLaberintoMuestra from '../../assets/images/laberinto-muestra.webp';
 import iconoAtras from '../../assets/images/arrow.webp'
 import iconoSonido from '../../assets/images/sound.webp';
 import iconoConfig from '../../assets/images/settings.webp';
+import ConfigModal from '../../components/modals/ConfigModal';
+import SoundModal from '../../components/modals/SoundModal';
 
 import {
   LevelSelectContainer,
@@ -20,6 +22,8 @@ import {
 function LevelSelect() {
   const navigate = useNavigate();
   const { setLevel } = useGame();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [isSoundOpen, setIsSoundOpen] = useState(false);
 
   const handleLevelSelect = (level) => {
     try {
@@ -38,10 +42,10 @@ function LevelSelect() {
         </IconButton>
         <Title>Selecciona un nivel para comenzar</Title>
         <NavigationButtons>
-          <IconButton>
+          <IconButton onClick={() => setIsSoundOpen(true)}>
             <img src={iconoSonido} alt="Sonido" />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={() => setIsConfigOpen(true)}>
             <img src={iconoConfig} alt="Configuración" />
           </IconButton>
         </NavigationButtons>
@@ -78,6 +82,15 @@ function LevelSelect() {
           <button onClick={() => handleLevelSelect('hard')}>Jugar</button>
         </LevelCard>
       </LevelSelectMenuContainer>
+
+      <ConfigModal 
+        isOpen={isConfigOpen} 
+        onClose={() => setIsConfigOpen(false)} 
+      />
+      <SoundModal 
+        isOpen={isSoundOpen} 
+        onClose={() => setIsSoundOpen(false)} 
+      />
     </LevelSelectContainer>
   );
 }

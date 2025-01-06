@@ -10,6 +10,9 @@ import settingsImg from '../../assets/images/settings.webp';
 import fullScreenImg from '../../assets/images/expandir.webp';
 import timerImg from '../../assets/images/timer.webp';
 import FinishedGame from './FinishedGame.jsx';
+import PauseModal from '../../components/modals/PauseModal';
+import ConfigModal from '../../components/modals/ConfigModal';
+import SoundModal from '../../components/modals/SoundModal';
 
 import {
   StyledGame,
@@ -30,7 +33,9 @@ export default function Game() {
   const [lives, setLives] = useState(3);
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [gameStats, setGameStats] = useState(null);
-
+  const [isPaused, setIsPaused] = useState(false);
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [isSoundOpen, setIsSoundOpen] = useState(false);
 
   const {
     maze,
@@ -44,6 +49,9 @@ export default function Game() {
 
   useEffect(() => {
     const handleKeyPress = (e) => {
+      if (e.key === 'Escape') {
+        setIsPaused(prev => !prev);
+      }
       if (e.key.toLowerCase() === 'q') { //esto es temporal
         // Finalizar el juego cuando se presiona 'q'
         const stats = {
@@ -98,10 +106,10 @@ export default function Game() {
         </MazeContainer>
         <GameControls>
           <div className="left-controls">
-            <button className="pause-btn">
+            <button className="pause-btn" onClick={() => setIsPaused(true)}>
               <img src={pauseImg} alt="Botón para pausar el juego" />
             </button>
-            <button className="settings-btn">
+            <button className="settings-btn" onClick={() => setIsConfigOpen(true)}>
               <img src={settingsImg} alt="Botón para abrir la configuración" />
             </button>
           </div>
@@ -119,6 +127,20 @@ export default function Game() {
           onBackToMenu={() => navigate('/')}
         />
       )}
+
+      <PauseModal 
+        isOpen={isPaused}
+        onClose={() => setIsPaused(false)}
+        onResume={() => setIsPaused(false)}
+      />
+      <ConfigModal 
+        isOpen={isConfigOpen}
+        onClose={() => setIsConfigOpen(false)}
+      />
+      <SoundModal 
+        isOpen={isSoundOpen}
+        onClose={() => setIsSoundOpen(false)}
+      />
     </StyledGame>
   );
 }
