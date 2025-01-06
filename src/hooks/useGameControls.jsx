@@ -11,27 +11,33 @@ export default function useMazeGame(level) {
   const [gameOver, setGameOver] = useState(false);
 
   useEffect(() => {
-    // Seleccionar un laberinto predefinido y una pregunta aleatoria
-    const levelMazes = mazes[level];
-    const randomMaze = levelMazes[Math.floor(Math.random() * levelMazes.length)];
-    setMaze(randomMaze);
+    const initializeGame = () => {
+      const levelMazes = mazes[level];
+      const randomMaze = levelMazes[Math.floor(Math.random() * levelMazes.length)];
+      setMaze(randomMaze);
 
+      fetchNextQuestion(level);
+
+      for (let y = 0; y < randomMaze.length; y++) {
+        for (let x = 0; x < randomMaze[y].length; x++) {
+          if (randomMaze[y][x] === 2) {
+            setPlayerPos({ x, y });
+            return;
+          }
+        }
+      }
+    };
+
+    initializeGame();
+  }, [level]);
+
+  const fetchNextQuestion = (level) => {
     const levelQuestions = questions[level];
     const randomQuestion = levelQuestions[
       Math.floor(Math.random() * levelQuestions.length)
     ];
     setCurrentQuestion(randomQuestion);
-
-    // Encontrar la posición inicial del jugador (valor 2 en el laberinto)
-    for (let y = 0; y < randomMaze.length; y++) {
-      for (let x = 0; x < randomMaze[y].length; x++) {
-        if (randomMaze[y][x] === 2) {
-          setPlayerPos({ x, y });
-          return;
-        }
-      }
-    }
-  }, [level]);
+  };
 
   const movePlayer = (direction) => {
     const newPos = { ...playerPos };
@@ -53,7 +59,6 @@ export default function useMazeGame(level) {
         return;
     }
 
-    // Verificar si el movimiento es válido
     if (
       newPos.y >= 0 &&
       newPos.y < maze.length &&
@@ -63,13 +68,11 @@ export default function useMazeGame(level) {
       const nextCell = maze[newPos.y][newPos.x];
 
       if (nextCell === 0 || nextCell === 2) {
-        // Movimiento a celda vacía
         setPlayerPos(newPos);
       } else if (nextCell === 3) {
-        // Llegó a una pregunta
-        setCurrentQuestion(currentQuestion);
+        setCurrentQuestion(null);
+        fetchNextQuestion(level);
       } else if (nextCell === 4) {
-        // Llegó al final
         setScore((prev) => prev + 100);
         setGameOver(true);
       }
@@ -83,5 +86,6 @@ export default function useMazeGame(level) {
     gameOver,
     currentQuestion,
     movePlayer,
+    fetchNextQuestion,
   };
 }
