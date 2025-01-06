@@ -81,6 +81,8 @@ export const Timer = styled.div`
   }
 `;
 
+
+
 export const Lives = styled.div`
   display: flex;
   gap: 5px;
