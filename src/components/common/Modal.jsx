@@ -15,33 +15,33 @@ const ModalOverlay = styled.div`
   z-index: 1000;
 `;
 
-const ModalContainer = styled.div`
+const ModalContent = styled.div`
   background: white;
-  border-radius: 15px;
   padding: 2rem;
-  width: 90%;
+  border-radius: 12px;
   max-width: 500px;
+  width: 90%;
   position: relative;
+
+  h2 {
+    color: #2D3648;
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 1rem;
+  right: 1rem;
   background: none;
   border: none;
+  font-size: 1.5rem;
   cursor: pointer;
-  
-  img {
-    width: 24px;
-    height: 24px;
-  }
-`;
-
-const ModalTitle = styled.h2`
   color: #2D3648;
-  margin-bottom: 1.5rem;
-  text-align: center;
+  
+  &:hover {
+    color: #3d4861;
+  }
 `;
 
 export default function Modal({ isOpen, onClose, title, children }) {
@@ -49,13 +49,13 @@ export default function Modal({ isOpen, onClose, title, children }) {
 
   return (
     <ModalOverlay>
-      <ModalContainer>
+      <ModalContent>
         <CloseButton onClick={onClose}>
           <img src={iconoCerrar} alt="Cerrar" />
         </CloseButton>
-        <ModalTitle>{title}</ModalTitle>
+        <h2>{title}</h2>
         {children}
-      </ModalContainer>
+      </ModalContent>
     </ModalOverlay>
   );
 }

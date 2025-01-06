@@ -1,139 +1,118 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styled from 'styled-components';
 import Modal from '../common/Modal';
 
-const ConfigContainer = styled.div`
+const ConfigMenuContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
+  padding: 1rem;
+  color: #2D3648;
 `;
 
 const ConfigOption = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: #f5f5f5;
-  border-radius: 8px;
-`;
+  flex-direction: column;
+  gap: 1rem;
 
-const Select = styled.select`
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-`;
-
-const Toggle = styled.label`
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-
-  input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+  label {
+    font-size: 1.1rem;
+    color: #2D3648;
+    font-weight: 500;
   }
 
-  span {
-    position: absolute;
+  select {
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #2D3648;
+    font-size: 1rem;
     cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
-
-    &:before {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: .4s;
-      border-radius: 50%;
+    color: #2D3648;
+    
+    &:focus {
+      outline: none;
+      border-color: #2D3648;
     }
   }
+`;
 
-  input:checked + span {
-    background-color: #34C759;
-  }
+const ToggleSwitch = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #2D3648;
 
-  input:checked + span:before {
-    transform: translateX(26px);
+  input[type="checkbox"] {
+    width: 50px;
+    height: 26px;
+    appearance: none;
+    background: #ddd;
+    border-radius: 13px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+
+    &:checked {
+      background: #2D3648;
+    }
+
+    &:before {
+      content: '';
+      width: 22px;
+      height: 22px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: left 0.3s;
+    }
+
+    &:checked:before {
+      left: 26px;
+    }
   }
 `;
 
 export default function ConfigModal({ isOpen, onClose }) {
-  const [config, setConfig] = useState({
-    difficulty: 'medium',
-    language: 'es',
-    showTimer: true,
-    showHints: true,
-  });
+  const [language, setLanguage] = useState('es');
+  const [timerEnabled, setTimerEnabled] = useState(true);
 
-  const handleChange = (key, value) => {
-    setConfig(prev => ({
-      ...prev,
-      [key]: value
-    }));
-    // Aquí podrías guardar los cambios en localStorage o en tu estado global
+  const handleLanguageChange = (e) => {
+    setLanguage(e.target.value);
+    // Aquí puedes implementar la lógica para cambiar el idioma
+  };
+
+  const handleTimerToggle = (e) => {
+    setTimerEnabled(e.target.checked);
+    // Aquí puedes implementar la lógica para activar/desactivar el temporizador
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Configuración">
-      <ConfigContainer>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ConfigMenuContainer>
+        <h2>Configuración</h2>
+        
         <ConfigOption>
-          <span>Dificultad</span>
-          <Select 
-            value={config.difficulty}
-            onChange={(e) => handleChange('difficulty', e.target.value)}
-          >
-            <option value="easy">Fácil</option>
-            <option value="medium">Medio</option>
-            <option value="hard">Difícil</option>
-          </Select>
-        </ConfigOption>
-
-        <ConfigOption>
-          <span>Idioma</span>
-          <Select 
-            value={config.language}
-            onChange={(e) => handleChange('language', e.target.value)}
-          >
+          <label>Idioma</label>
+          <select value={language} onChange={handleLanguageChange}>
             <option value="es">Español</option>
             <option value="en">English</option>
-          </Select>
+          </select>
         </ConfigOption>
 
         <ConfigOption>
-          <span>Mostrar temporizador</span>
-          <Toggle>
+          <label>Temporizador</label>
+          <ToggleSwitch>
             <input 
-              type="checkbox"
-              checked={config.showTimer}
-              onChange={(e) => handleChange('showTimer', e.target.checked)}
+              type="checkbox" 
+              checked={timerEnabled}
+              onChange={handleTimerToggle}
             />
-            <span></span>
-          </Toggle>
+            <span>{timerEnabled ? 'Activado' : 'Desactivado'}</span>
+          </ToggleSwitch>
         </ConfigOption>
-
-        <ConfigOption>
-          <span>Mostrar pistas</span>
-          <Toggle>
-            <input 
-              type="checkbox"
-              checked={config.showHints}
-              onChange={(e) => handleChange('showHints', e.target.checked)}
-            />
-            <span></span>
-          </Toggle>
-        </ConfigOption>
-      </ConfigContainer>
+      </ConfigMenuContainer>
     </Modal>
   );
 } 

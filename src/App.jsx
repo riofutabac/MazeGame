@@ -5,6 +5,7 @@ import Game from './pages/Game/Game';
 // import Settings from './pages/Settings';
 import LevelSelect from './pages/LevelSelect/LevelSelect';
 import { GameProvider } from './contexts/GameContext';
+import Instructions from './pages/Instructions/Instructions';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           {/* <Route path="/instructions" element={<Instructions />} /> */}
           {/* <Route path="/settings" element={<Settings />} /> */}
           <Route path="/level-select" element={<LevelSelect />} />
+          <Route path="/instructions" element={<Instructions />} />
         </Routes>
       </Router>
     </GameProvider>
