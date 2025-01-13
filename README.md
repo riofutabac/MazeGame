@@ -1,43 +1,52 @@
-# MazeGame - Laberinto Educativo
+# MazeGame - Laberinto Educativo 🎮
 
 ## 📖 Descripción
-Un juego educativo de laberinto diseñado para niños de 5 a 7 años, desarrollado con React y Vite. El juego combina la diversión de navegar por un laberinto con preguntas educativas que aparecen durante el recorrido.
+Un juego educativo de laberinto diseñado para niños de 5 a 7 años, desarrollado con React y Vite. El juego combina la diversión de navegar por un laberinto con preguntas educativas que aparecen durante el recorrido, fomentando el aprendizaje mientras juegan.
 
 ## 🎮 Características Principales
-- Laberinto interactivo con múltiples niveles
-- Sistema de preguntas educativas
-- Diferentes niveles de dificultad
-- Interfaz intuitiva y amigable para niños
-- Sistema completo de menús y configuraciones
-- Controles sencillos mediante teclado
+- Laberinto interactivo con múltiples niveles de dificultad progresiva
+- Sistema dinámico de preguntas educativas adaptadas por edad
+- Interfaz colorida e intuitiva diseñada específicamente para niños
+- Sistema de progresión y recompensas
+- Efectos de sonido y animaciones atractivas
+- Controles sencillos mediante teclado o pantalla táctil
+- Modo práctica y modo desafío
+- Sistema de guardado de progreso
 
 ## 🛠️ Tecnologías Utilizadas
 - React 18
 - Vite
 - CSS Modules
-- React Router DOM
+- React Router DOM v6
 - Context API
+- Canvas API
+- Local Storage para guardado de progreso
+- Jest para pruebas unitarias
 
 ## 📁 Estructura del Proyecto
 ```
 maze-game/
 ├─ src/
-│  ├─ assets/          # Recursos estáticos
+│  ├─ assets/          # Recursos estáticos (imágenes, sonidos)
 │  ├─ components/      # Componentes React
 │  │  ├─ common/      # Componentes reutilizables
+│  │  ├─ game/        # Componentes específicos del juego
 │  │  ├─ menus/       # Menús del juego
 │  │  └─ modals/      # Ventanas modales
+│  ├─ contexts/        # Contextos de React
+│  ├─ hooks/          # Hooks personalizados
+│  ├─ logic/          # Lógica del juego
 │  ├─ pages/          # Páginas principales
-│  ├─ utils/          # Utilidades y helpers
 │  ├─ styles/         # Estilos CSS
-│  └─ context/        # Contextos de React
+│  └─ utils/          # Utilidades y helpers
 ```
 
-## ⚙️ Requisitos
+## ⚙️ Requisitos Previos
 - Node.js >= 18.0.0
-- npm o yarn
+- npm >= 9.0.0 o yarn >= 1.22.0
+- Navegador web moderno con soporte para Canvas API
 
-## 🚀 Instalación
+## 🚀 Instalación y Uso
 
 1. Clonar el repositorio:
 ```bash
@@ -55,54 +64,54 @@ npm install
 npm run dev
 ```
 
-## 🎯 Controles
-- Flechas direccionales (↑, ↓, ←, →) para mover el personaje
-- Enter: Confirmar selecciones
-- Escape: Pausar/Menú
+4. Abrir el navegador en `http://localhost:5173`
+
+## 🎯 Controles del Juego
+- Teclado:
+  - Flechas direccionales (↑, ↓, ←, →) para mover el personaje
+  - Enter: Confirmar selecciones
+  - Escape: Pausar/Menú
+- Pantalla táctil:
+  - Deslizar en la dirección deseada
+  - Tocar botones para seleccionar opciones
 
 ## 📦 Scripts Disponibles
 - `npm run dev`: Inicia el entorno de desarrollo
 - `npm run build`: Genera build de producción
 - `npm run preview`: Vista previa de producción
 - `npm run lint`: Ejecuta el linter
+- `npm run test`: Ejecuta las pruebas unitarias
+- `npm run coverage`: Genera reporte de cobertura de pruebas
 
-## 🌐 Despliegue
-Para generar la versión de producción:
+## 🌐 Despliegue en Producción
+
+### Construcción Local
 ```bash
 npm run build
 ```
 Los archivos se generarán en la carpeta `dist/`
 
-## 📝 Despliegue en Netlify
+### Despliegue Automático en Netlify
+1. Conecta tu repositorio de GitHub con Netlify
+2. Configura los siguientes valores:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+   - Node version: `18`
 
-1. Asegúrate de tener tu código en un repositorio de GitHub
+## 🤝 Contribución
+1. Haz un Fork del proyecto
+2. Crea una rama para tu función (`git checkout -b feature/AmazingFeature`)
+3. Realiza tus cambios y haz commit (`git commit -m 'Add: AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
-2. En Netlify:
-   - Inicia sesión en [Netlify](https://www.netlify.com/)
-   - Haz clic en "New site from Git"
-   - Selecciona tu repositorio de GitHub
-   - Configura los siguientes valores:
-     - Build command: `npm run build`
-     - Publish directory: `dist`
-   - Haz clic en "Deploy site"
+## 👥 Equipo de Desarrollo
+- [Alexis Lapo](https://github.com/riofutabac) - Desarrollador Principal
+- [María González](https://github.com/mariagonzalez) - Diseñadora UI/UX
+- [Carlos Ruiz](https://github.com/carlosruiz) - Desarrollador Frontend
+- [Ana Martínez](https://github.com/anamartinez) - QA y Testing
 
-3. Configuraciones adicionales:
-   - En la sección "Build & Deploy" de tu sitio en Netlify:
-     - Verifica que el comando de build sea: `npm run build`
-     - El directorio de publicación sea: `dist`
 
-4. Variables de entorno (si las necesitas):
-   - Ve a Site settings > Build & deploy > Environment
-   - Añade tus variables de entorno necesarias
-
-Los redirects para el manejo de rutas ya están configurados en el archivo `netlify.toml`
-
-## 📝 Licencia
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para detalles.
-
-## 👥 Contribuidores
-- [Alexis Lapo](https://github.com/riofutabac)
-- [Alexis Lapo](https://github.com/riofutabac)
-- [Alexis Lapo](https://github.com/riofutabac)
-- [Alexis Lapo](https://github.com/riofutabac)
+---
+Desarrollado con ❤️ por el equipo de MazeGame
 
