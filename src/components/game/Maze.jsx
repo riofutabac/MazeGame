@@ -1,5 +1,6 @@
 // src/components/game/Maze.jsx
 import styled from 'styled-components';
+import { useRef, useEffect, useCallback, useState } from 'react';
 
 const MazeContainer = styled.div`
   display: grid;
@@ -37,22 +38,23 @@ const Player = styled.div`
 `;
 
 export default function Maze({ maze, playerPos }) {
-  if (!maze.length) return <div>Cargando...</div>;
-
   return (
-    <MazeContainer size={maze[0].length}>
-      {maze.map((row, y) =>
-        row.map((cell, x) => (
-          <Cell
-            key={`${x}-${y}`}
-            $isWall={cell === 1}
-            $isAnswer={cell === 3}
-            $isFinish={cell === 4}
-          >
-            {playerPos.x === x && playerPos.y === y && <Player />}
-          </Cell>
-        ))
-      )}
-    </MazeContainer>
+    <div className="maze">
+      {maze.map((row, y) => (
+        <div key={y} className="row">
+          {row.map((cell, x) => (
+            <div 
+              key={`${y}-${x}`} 
+              className={`cell ${
+                cell === 1 ? 'wall' : 
+                cell === 2 ? 'player' :
+                cell === 3 ? 'question' :
+                cell === 4 ? 'goal' : 'path'
+              }`}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }
