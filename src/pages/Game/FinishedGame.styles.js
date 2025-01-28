@@ -186,11 +186,25 @@ export const AnswerCard = styled.div`
   flex: 1;
   min-width: 300px;
   max-width: 450px;
-  background: white;
+  background: ${props => {
+    if (props.correct) return '#E8F5E9';  // Verde claro para respuestas correctas
+    if (props.incorrect) return '#FFEBEE';  // Rojo claro para respuestas incorrectas
+    return 'white';
+  }};
+  border: 2px solid ${props => {
+    if (props.correct) return '#34C759';  // Verde para respuestas correctas
+    if (props.incorrect) return '#FF3B30';  // Rojo para respuestas incorrectas
+    return '#E0E0E0';
+  }};
   border-radius: 10px;
   padding: 18px;
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.02);
+  }
 
   h2 {
     color: ${props => {
@@ -199,48 +213,22 @@ export const AnswerCard = styled.div`
       return '#2D3648';  
     }};
     margin-bottom: 1rem;
-    font-size: 1.4rem;
-    font-weight: bold;
+    font-size: 1.5rem;
   }
 
   .answer-image {
-    width: 110px;
-    height: 110px;
-    margin: 0.7rem 0;
-    object-fit: cover;
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    margin: 1rem auto;
     border-radius: 8px;
   }
 
   .description {
     color: #666;
+    font-size: 1rem;
     line-height: 1.5;
-    font-size: 0.95rem;
-    margin-top: 0.7rem;
-    padding: 0 8px;
-  }
-
-  border: 2px solid ${props => {
-    if (props.correct) return '#34C759';
-    if (props.incorrect) return '#FF3B30';
-    return 'transparent';
-  }};
-
-  @media (max-width: 1200px) {
-    min-width: 280px;
-    padding: 15px;
-    
-    h2 {
-      font-size: 1.3rem;
-    }
-    
-    .answer-image {
-      width: 100px;
-      height: 100px;
-    }
-    
-    .description {
-      font-size: 0.9rem;
-    }
+    margin-top: 1rem;
   }
 `;
 

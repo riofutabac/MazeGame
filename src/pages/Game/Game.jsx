@@ -50,6 +50,40 @@ export default function Game() {
   const [drawer, setDrawer] = useState(null);
   const [player, setPlayer] = useState(null);
 
+  // Función para obtener los parámetros del juego según el nivel
+  const getGameParameters = (level) => {
+    switch (level) {
+      case 'easy':
+        return {
+          mazeWidth: 5,  // Más pequeño y simple
+          mazeHeight: 5,
+          lives: 5,
+          timeLimit: 360 // 6 minutos - mucho tiempo para explorar
+        };
+      case 'medium':
+        return {
+          mazeWidth: 7,  // Reducido de 10x10 a 7x7
+          mazeHeight: 7,
+          lives: 4,      // Más vidas
+          timeLimit: 300 // 5 minutos
+        };
+      case 'hard':
+        return {
+          mazeWidth: 10,  // Reducido de 15x15 a 10x10
+          mazeHeight: 10,
+          lives: 3,       // Una vida más
+          timeLimit: 240  // 4 minutos
+        };
+      default:
+        return {
+          mazeWidth: 7,
+          mazeHeight: 7,
+          lives: 4,
+          timeLimit: 300
+        };
+    }
+  };
+
   // Iniciar el cronómetro cuando el juego comienza
   useEffect(() => {
     startTimer();
@@ -87,7 +121,12 @@ export default function Game() {
   }, []);
 
   useEffect(() => {
-    generateMaze();
+    if (level) {
+      const params = getGameParameters(level);
+      setLives(params.lives);
+      setTime(params.timeLimit);
+      generateMaze();
+    }
   }, [level]);
 
   useEffect(() => {
@@ -122,23 +161,52 @@ export default function Game() {
   const generateMaze = () => {
     setShowModal(false);
     setMoves(0);
-    setTime(0);
-    startTimer();
-
-    const newMaze = new MazeGenerator(10, 10);
+    
+    const params = getGameParameters(level);
+    const newMaze = new MazeGenerator(params.mazeWidth, params.mazeHeight);
+    
     const ctx = canvasRef.current.getContext('2d');
-    const newDrawer = new DrawMaze(newMaze, ctx, Math.floor(canvasRef.current.width / 10));
-    const newPlayer = new Player(
-      newMaze,
-      ctx,
-      Math.floor(canvasRef.current.width / 10),
-      handleGameComplete
-    );
+    const cellSize = Math.floor(Math.min(
+      canvasRef.current.width / params.mazeWidth,
+      canvasRef.current.height / params.mazeHeight
+    ));
+    
+    const newDrawer = new DrawMaze(newMaze, ctx, cellSize);
+    const newPlayer = new Player(newMaze, ctx, cellSize, handleGameComplete);
 
     setMaze(newMaze);
     setDrawer(newDrawer);
     setPlayer(newPlayer);
+    setCellSize(cellSize);
   };
+
+  useEffect(() => {
+    if (isPaused || isGameFinished) {
+      clearInterval(timerRef.current);
+      return;
+    }
+
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setTime(prevTime => {
+        const newTime = prevTime - 1;
+        if (newTime <= 0) {
+          clearInterval(timerRef.current);
+          setIsGameFinished(true);
+          setGameStats({
+            completed: false,
+            reason: 'timeout',
+            moves: moves,
+            timeSpent: getGameParameters(level).timeLimit - newTime,
+          });
+          return 0;
+        }
+        return newTime;
+      });
+    }, 1000);
+
+    return () => clearInterval(timerRef.current);
+  }, [isPaused, isGameFinished]);
 
   const handleKeyDown = (e) => {
     if (!player) return;
