@@ -56,7 +56,6 @@ export function GameProvider({ children }) {
 
   return <GameContext.Provider value={value}>{children}</GameContext.Provider>;
 }
-
 export function useGame() {
   return useContext(GameContext);
 }

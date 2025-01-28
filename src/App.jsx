@@ -1,11 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home.jsx';
 import Game from './pages/Game/Game';
-// import Instructions from './pages/Instructions';
-// import Settings from './pages/Settings';
 import LevelSelect from './pages/LevelSelect/LevelSelect';
 import { GameProvider } from './contexts/GameContext';
 import Instructions from './pages/Instructions/Instructions';
+import i18n from './i18n/i18n';
 
 function App() {
   return (
@@ -23,5 +22,4 @@ function App() {
     </GameProvider>
   );
 }
-
 export default App;

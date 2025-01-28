@@ -7,6 +7,18 @@ export const LevelSelectContainer = styled.div`
   min-height: 100vh;
   padding: 20px;
   position: relative;
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 `;
 
 export const HeaderContainer = styled.div`
@@ -14,7 +26,6 @@ export const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-
 `;
 
 export const NavigationButtons = styled.div`
@@ -33,12 +44,18 @@ export const IconButton = styled.button`
   transition: transform 0.2s;
 
   img {
-     width: 80px;      
+    width: 80px;      
     height: 80px;   
   }
 
   &:hover {
     transform: scale(1.05); 
+  }
+
+  &:focus-visible {
+    outline: 3px solid #4A90E2;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
   }
 `;
 
@@ -48,6 +65,11 @@ export const Title = styled.h1`
   text-align: center;
   flex-grow: 1;
   font-weight: 400;  
+
+  &:focus {
+    outline: none;
+    text-decoration: underline;
+  }
 `;
 
 export const LevelSelectMenuContainer = styled.div`
@@ -76,6 +98,17 @@ export const LevelCard = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
   border: 2px solid #000;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover, &:focus {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  &:focus-visible {
+    outline: 3px solid #4A90E2;
+    outline-offset: 2px;
+  }
 
   h1 {
     position: absolute;
@@ -89,6 +122,11 @@ export const LevelCard = styled.div`
       1px -1px 0 #000, 
       -1px 1px 0 #000, 
       1px 1px 0 #000;
+
+    &:focus {
+      outline: none;
+      text-decoration: underline;
+    }
   }
 
   img {
@@ -101,22 +139,34 @@ export const LevelCard = styled.div`
     margin: 20px 0;
     font-size: 1.1rem;
     line-height: 1.5;
-    color: #2D3648;
+    color: rgb(45, 54, 72);
+
+    &:focus {
+      outline: none;
+      text-decoration: underline;
+    }
   }
 
   button {
-    margin-top: auto;
-    padding: 12px 30px;
-    background-color: #2D3648;
+    padding: 12px 40px;
+    font-size: 1.2rem;
+    background: rgb(45, 54, 72);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 25px;
     cursor: pointer;
-    font-size: 1.1rem;
-    transition: background-color 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
+    margin-top: 20px;
 
     &:hover {
-      background-color: #404A5F;
+      transform: scale(1.05);
+      background: rgb(64, 74, 95);
+    }
+
+    &:focus-visible {
+      outline: 3px solid #4A90E2;
+      outline-offset: 2px;
+      box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
     }
   }
 `;

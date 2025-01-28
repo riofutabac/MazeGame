@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import Modal from '../common/Modal';
 
@@ -75,12 +76,19 @@ const ToggleSwitch = styled.div`
 `;
 
 export default function ConfigModal({ isOpen, onClose }) {
-  const [language, setLanguage] = useState('es');
+  const { t, i18n } = useTranslation();
+  const [language, setLanguage] = useState(i18n.language || 'es');
   const [timerEnabled, setTimerEnabled] = useState(true);
 
+  useEffect(() => {
+    setLanguage(i18n.language);
+  }, [i18n.language]);
+
   const handleLanguageChange = (e) => {
-    setLanguage(e.target.value);
-    // Aquí puedes implementar la lógica para cambiar el idioma
+    const newLang = e.target.value;
+    setLanguage(newLang);
+    i18n.changeLanguage(newLang);
+    localStorage.setItem('userLanguage', newLang);
   };
 
   const handleTimerToggle = (e) => {
@@ -91,10 +99,10 @@ export default function ConfigModal({ isOpen, onClose }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ConfigMenuContainer>
-        <h2>Configuración</h2>
+        <h2>{t('config.title')}</h2>
         
         <ConfigOption>
-          <label>Idioma</label>
+          <label>{t('config.language')}</label>
           <select value={language} onChange={handleLanguageChange}>
             <option value="es">Español</option>
             <option value="en">English</option>
@@ -102,17 +110,17 @@ export default function ConfigModal({ isOpen, onClose }) {
         </ConfigOption>
 
         <ConfigOption>
-          <label>Temporizador</label>
+          <label>{t('config.timer')}</label>
           <ToggleSwitch>
             <input 
               type="checkbox" 
               checked={timerEnabled}
               onChange={handleTimerToggle}
             />
-            <span>{timerEnabled ? 'Activado' : 'Desactivado'}</span>
+            <span>{timerEnabled ? t('config.enabled') : t('config.disabled')}</span>
           </ToggleSwitch>
         </ConfigOption>
       </ConfigMenuContainer>
     </Modal>
   );
-} 
+}

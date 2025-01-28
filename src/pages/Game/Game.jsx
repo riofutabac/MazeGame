@@ -32,7 +32,7 @@ import {
 export default function Game() {
   const navigate = useNavigate();
   const { level, currentQuestion } = useGame();
-  const [time, setTime] = useState('00:00');
+  const [time, setTime] = useState(0);
   const [lives, setLives] = useState(3);
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [gameStats, setGameStats] = useState(null);
@@ -43,11 +43,42 @@ export default function Game() {
   const [showModal, setShowModal] = useState(false);
 
   const canvasRef = useRef(null);
+  const timerRef = useRef(null);
   const [cellSize, setCellSize] = useState(20);
 
   const [maze, setMaze] = useState(null);
   const [drawer, setDrawer] = useState(null);
   const [player, setPlayer] = useState(null);
+
+  // Iniciar el cronómetro cuando el juego comienza
+  useEffect(() => {
+    startTimer();
+    return () => clearInterval(timerRef.current);
+  }, []);
+
+  // Pausar/reanudar el cronómetro cuando el estado de pausa cambia
+  useEffect(() => {
+    if (isPaused) {
+      clearInterval(timerRef.current);
+    } else {
+      startTimer();
+    }
+  }, [isPaused]);
+
+  // Función para iniciar el cronómetro
+  const startTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setTime(prevTime => prevTime + 1);
+    }, 1000);
+  };
+
+  // Función para formatear el tiempo
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
 
   useEffect(() => {
     handleResize();
@@ -73,10 +104,11 @@ export default function Game() {
     canvasRef.current.width = minSide;
     canvasRef.current.height = minSide;
 
-    setCellSize(Math.floor(minSide / 10)); // Ajusta según la dificultad
+    setCellSize(Math.floor(minSide / 10));
   };
 
   const handleGameComplete = (finalMoves) => {
+    clearInterval(timerRef.current);
     setMoves(finalMoves);
     setIsGameFinished(true);
     setGameStats({
@@ -90,6 +122,8 @@ export default function Game() {
   const generateMaze = () => {
     setShowModal(false);
     setMoves(0);
+    setTime(0);
+    startTimer();
 
     const newMaze = new MazeGenerator(10, 10);
     const ctx = canvasRef.current.getContext('2d');
@@ -139,7 +173,7 @@ export default function Game() {
             <TimerContainer>
               <img src={timerImg} alt="Tiempo" />
               <Timer>
-                <span>{time}</span>
+                <span>{formatTime(time)}</span>
               </Timer>
             </TimerContainer>
             <Lives>

@@ -31,6 +31,12 @@ function FinishedGame({ stats }) {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isSoundOpen, setIsSoundOpen] = useState(false);
 
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   return (
     <LevelSelectContainer>
       <HeaderContainer>
@@ -52,7 +58,7 @@ function FinishedGame({ stats }) {
       <TimerContainer>
             <img src={timerImg} alt="Botón para abrir la configuración" />
             <Timer>
-              <span>{stats?.time || "00:00"}</span>
+              <span>{formatTime(stats?.time) || "00:00"}</span>
             </Timer>
           </TimerContainer>
       </GameStats>
@@ -84,12 +90,6 @@ function FinishedGame({ stats }) {
           </AnswerCard>
         ))}
       </AnswersContainer>
-
-      {/* <StatsDescription>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-        Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
-      </StatsDescription> */}
 
       <PlayAgainButton onClick={() => navigate('/level-select')}>
         Jugar de nuevo

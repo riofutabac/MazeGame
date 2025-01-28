@@ -1,0 +1,28 @@
+{
+  "home": {
+    "title": "Maze Game",
+    "play": "Play",
+    "instructions": "Instructions",
+    "settings": "Settings"
+  },
+  "game": {
+    "level": "Level {{level}}",
+    "time": "Time: {{time}}",
+    "moves": "Moves: {{moves}}",
+    "pause": "Pause",
+    "resume": "Resume",
+    "restart": "Restart",
+    "exit": "Exit"
+  },
+  "instructions": {
+    "title": "Instructions",
+    "back": "Back"
+  },
+  "config": {
+    "title": "Settings",
+    "language": "Language",
+    "timer": "Timer",
+    "enabled": "Enabled",
+    "disabled": "Disabled"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "home": {
+    "title": "Juego del Laberinto",
+    "play": "Jugar",
+    "instructions": "Instrucciones",
+    "settings": "Configuración"
+  },
+  "game": {
+    "level": "Nivel {{level}}",
+    "time": "Tiempo: {{time}}",
+    "moves": "Movimientos: {{moves}}",
+    "pause": "Pausa",
+    "resume": "Continuar",
+    "restart": "Reiniciar",
+    "exit": "Salir"
+  },
+  "instructions": {
+    "title": "Instrucciones",
+    "back": "Volver"
+  },
+  "config": {
+    "title": "Configuración",
+    "language": "Idioma",
+    "timer": "Temporizador",
+    "enabled": "Activado",
+    "disabled": "Desactivado"
+  }
+}
