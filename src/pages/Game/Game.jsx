@@ -32,7 +32,7 @@ import {
 export default function Game() {
   const navigate = useNavigate();
   const { level, currentQuestion } = useGame();
-  const [time, setTime] = useState('00:00');
+  const [time, setTime] = useState('05:00');
   const [lives, setLives] = useState(3);
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [gameStats, setGameStats] = useState(null);
@@ -41,9 +41,12 @@ export default function Game() {
   const [isSoundOpen, setIsSoundOpen] = useState(false);
   const [moves, setMoves] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(300); // 5 minutos en segundos
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const canvasRef = useRef(null);
   const [cellSize, setCellSize] = useState(20);
+  const timerRef = useRef(null);
 
   const [maze, setMaze] = useState(null);
   const [drawer, setDrawer] = useState(null);
@@ -66,6 +69,28 @@ export default function Game() {
     }
   }, [level, currentQuestion]);
 
+  // Temporizador
+  useEffect(() => {
+    if (!isPaused && !isGameFinished && secondsLeft > 0) {
+      timerRef.current = setInterval(() => {
+        setSecondsLeft(prev => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            setIsGameFinished(true);
+            return 0;
+          }
+          const newSeconds = prev - 1;
+          const minutes = Math.floor(newSeconds / 60);
+          const seconds = newSeconds % 60;
+          setTime(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+          return newSeconds;
+        });
+      }, 1000);
+
+      return () => clearInterval(timerRef.current);
+    }
+  }, [isPaused, isGameFinished, secondsLeft]);
+
   const handleResize = () => {
     if (!canvasRef.current) return;
 
@@ -73,12 +98,13 @@ export default function Game() {
     canvasRef.current.width = minSide;
     canvasRef.current.height = minSide;
 
-    setCellSize(Math.floor(minSide / 10)); // Ajusta según la dificultad
+    setCellSize(Math.floor(minSide / 10));
   };
 
   const handleGameComplete = (finalMoves) => {
     setMoves(finalMoves);
     setIsGameFinished(true);
+    clearInterval(timerRef.current);
     setGameStats({
       moves: finalMoves,
       time: time,
@@ -90,6 +116,8 @@ export default function Game() {
   const generateMaze = () => {
     setShowModal(false);
     setMoves(0);
+    setSecondsLeft(300); // Reiniciar temporizador a 5 minutos
+    setTime('05:00');
 
     const newMaze = new MazeGenerator(10, 10);
     const ctx = canvasRef.current.getContext('2d');
@@ -106,69 +134,131 @@ export default function Game() {
     setPlayer(newPlayer);
   };
 
-  const handleKeyDown = (e) => {
-    if (!player) return;
-    switch (e.key) {
-      case 'ArrowUp':
-        player.move('up');
-        break;
-      case 'ArrowDown':
-        player.move('down');
-        break;
-      case 'ArrowLeft':
-        player.move('left');
-        break;
-      case 'ArrowRight':
-        player.move('right');
-        break;
-      default:
-        break;
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+      }).catch(err => {
+        console.error(`Error al intentar pantalla completa: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+      }).catch(err => {
+        console.error(`Error al salir de pantalla completa: ${err.message}`);
+      });
     }
   };
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  });
+  const handleMazeKeyDown = (e) => {
+    if (!player || isPaused || isGameFinished) return;
+    
+    let direction = null;
+    switch (e.key) {
+      case 'ArrowUp':
+        direction = 'up';
+        break;
+      case 'ArrowDown':
+        direction = 'down';
+        break;
+      case 'ArrowLeft':
+        direction = 'left';
+        break;
+      case 'ArrowRight':
+        direction = 'right';
+        break;
+      default:
+        return;
+    }
+
+    if (direction) {
+      e.preventDefault(); // Prevenir el scroll
+      player.move(direction);
+      const currentPosition = player.getCurrentPosition();
+      const announcement = `Movimiento ${direction}. Posición actual: fila ${currentPosition.row + 1}, columna ${currentPosition.col + 1}`;
+      announcePosition(announcement);
+    }
+  };
+
+  const announcePosition = (message) => {
+    const announcement = document.getElementById('maze-announcement');
+    if (announcement) {
+      announcement.textContent = message;
+    }
+  };
 
   return (
     <StyledGame>
       {!isGameFinished ? (
         <GameBoard>
           <GameHeader>
-            <TimerContainer>
+            <TimerContainer tabIndex={1} aria-label={`Tiempo restante: ${time}`}>
               <img src={timerImg} alt="Tiempo" />
               <Timer>
                 <span>{time}</span>
               </Timer>
             </TimerContainer>
-            <Lives>
+            <Lives tabIndex={2} aria-label={`${lives} vidas restantes`}>
               {[...Array(lives)].map((_, index) => (
                 <AiFillHeart key={index} color="red" />
               ))}
             </Lives>
           </GameHeader>
 
-          <QuestionSection>
+          <QuestionSection tabIndex={3}>
             <h4>Nivel: {level}</h4>
             <h3>{currentQuestion?.question}</h3>
           </QuestionSection>
 
           <MazeContainer>
-            <MazeCanvas canvasRef={canvasRef} />
+            {/* Elemento para anuncios de lectores de pantalla */}
+            <div 
+              id="maze-announcement" 
+              className="sr-only" 
+              role="status" 
+              aria-live="polite"
+            ></div>
+            
+            <div 
+              role="application"
+              tabIndex={4}
+              onKeyDown={handleMazeKeyDown}
+              aria-label="Laberinto del juego. Usa las flechas del teclado para moverte. Estás en la posición inicial."
+            >
+              <MazeCanvas canvasRef={canvasRef} />
+            </div>
           </MazeContainer>
+          
           <GameControls>
             <div className="left-controls">
-              <button className="pause-btn" onClick={() => setIsPaused(true)}>
+              <button 
+                className="pause-btn" 
+                onClick={() => setIsPaused(true)}
+                tabIndex={5}
+                aria-label="Pausar juego"
+              >
                 <img src={pauseImg} alt="Botón para pausar el juego" />
               </button>
-              <button className="settings-btn" onClick={() => setIsConfigOpen(true)}>
+              <button 
+                className="settings-btn" 
+                onClick={() => setIsConfigOpen(true)}
+                tabIndex={6}
+                aria-label="Abrir configuración"
+              >
                 <img src={settingsImg} alt="Botón para abrir la configuración" />
               </button>
             </div>
             <div className="right-controls">
-              <button className="fullscreen-btn">
-                <img src={fullScreenImg} alt="Botón para activar pantalla completa" />
+              <button 
+                className="fullscreen-btn"
+                onClick={toggleFullScreen}
+                tabIndex={7}
+                aria-label={isFullscreen ? "Salir de pantalla completa" : "Activar pantalla completa"}
+              >
+                <img 
+                  src={fullScreenImg} 
+                  alt={isFullscreen ? "Salir de pantalla completa" : "Activar pantalla completa"} 
+                />
               </button>
             </div>
           </GameControls>
