@@ -32,7 +32,7 @@ import {
 export default function Game() {
   const navigate = useNavigate();
   const { level, currentQuestion } = useGame();
-  const [time, setTime] = useState('00:00');
+  const [time, setTime] = useState('05:00');
   const [lives, setLives] = useState(3);
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [gameStats, setGameStats] = useState(null);
@@ -41,13 +41,17 @@ export default function Game() {
   const [isSoundOpen, setIsSoundOpen] = useState(false);
   const [moves, setMoves] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(300);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [startTime] = useState(Date.now());
 
   const canvasRef = useRef(null);
   const [cellSize, setCellSize] = useState(20);
+  const timerRef = useRef(null);
 
-  const [maze, setMaze] = useState(null);
-  const [drawer, setDrawer] = useState(null);
-  const [player, setPlayer] = useState(null);
+  const maze = useRef(null);
+  const drawer = useRef(null);
+  const player = useRef(null);
 
   useEffect(() => {
     handleResize();
@@ -66,6 +70,58 @@ export default function Game() {
     }
   }, [level, currentQuestion]);
 
+  useEffect(() => {
+    if (!isPaused && !isGameFinished && player.current) {
+      announcePosition(
+        "Bienvenido al laberinto. Usa las flechas del teclado para moverte." +
+        "Presiona la barra espaciadora para recibir una pista de la siguiente dirección. IMPORTANTE: Debes continuar en la misma dirección hasta recibir una nueva pista diferente. " +
+        "El objetivo es llegar al final del laberinto."
+      );
+    }
+  }, [player]);
+
+  useEffect(() => {
+    if (!isPaused && !isGameFinished) {
+      timerRef.current = setInterval(() => {
+        const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+        const remaining = Math.max(300 - elapsedSeconds, 0);
+        
+        setSecondsLeft(remaining);
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        setTime(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+
+        if (remaining <= 0) {
+          clearInterval(timerRef.current);
+          setIsGameFinished(true);
+        }
+      }, 1000);
+
+      return () => clearInterval(timerRef.current);
+    }
+  }, [isPaused, isGameFinished, startTime]);
+
+  const handleMazeComplete = (moves) => {
+    clearInterval(timerRef.current);
+    const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const timeSpent = Math.min(elapsedSeconds, 300);
+    
+    console.log('Tiempo transcurrido en segundos:', timeSpent);
+    const minutes = Math.floor(timeSpent / 60);
+    const seconds = timeSpent % 60;
+    const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    const stats = {
+      time: formattedTime,
+      moves: moves,
+      level: level
+    };
+    console.log('Stats completos:', stats);
+    setGameStats(stats);
+    setIsGameFinished(true);
+    announcePosition("¡Felicitaciones! Has solucionado el laberinto.");
+  };
+
   const handleResize = () => {
     if (!canvasRef.current) return;
 
@@ -73,23 +129,14 @@ export default function Game() {
     canvasRef.current.width = minSide;
     canvasRef.current.height = minSide;
 
-    setCellSize(Math.floor(minSide / 10)); // Ajusta según la dificultad
-  };
-
-  const handleGameComplete = (finalMoves) => {
-    setMoves(finalMoves);
-    setIsGameFinished(true);
-    setGameStats({
-      moves: finalMoves,
-      time: time,
-      question: currentQuestion,
-      level: level
-    });
+    setCellSize(Math.floor(minSide / 10));
   };
 
   const generateMaze = () => {
     setShowModal(false);
     setMoves(0);
+    setSecondsLeft(300); 
+    setTime('05:00');
 
     const newMaze = new MazeGenerator(10, 10);
     const ctx = canvasRef.current.getContext('2d');
@@ -98,78 +145,135 @@ export default function Game() {
       newMaze,
       ctx,
       Math.floor(canvasRef.current.width / 10),
-      handleGameComplete
+      handleMazeComplete
     );
 
-    setMaze(newMaze);
-    setDrawer(newDrawer);
-    setPlayer(newPlayer);
+    maze.current = newMaze;
+    drawer.current = newDrawer;
+    player.current = newPlayer;
   };
 
-  const handleKeyDown = (e) => {
-    if (!player) return;
-    switch (e.key) {
-      case 'ArrowUp':
-        player.move('up');
-        break;
-      case 'ArrowDown':
-        player.move('down');
-        break;
-      case 'ArrowLeft':
-        player.move('left');
-        break;
-      case 'ArrowRight':
-        player.move('right');
-        break;
-      default:
-        break;
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+      }).catch(err => {
+        console.error(`Error al intentar pantalla completa: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+      }).catch(err => {
+        console.error(`Error al salir de pantalla completa: ${err.message}`);
+      });
     }
   };
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  });
+  const handleMazeKeyDown = (e) => {
+    if (!player.current || isPaused || isGameFinished) return;
+    
+    let direction = null;
+    switch (e.key) {
+      case 'ArrowUp':
+        direction = 'up';
+        break;
+      case 'ArrowDown':
+        direction = 'down';
+        break;
+      case 'ArrowLeft':
+        direction = 'left';
+        break;
+      case 'ArrowRight':
+        direction = 'right';
+        break;
+      case ' ': 
+      case 'Enter':
+        const currentPos = player.current.getCurrentPosition();
+        const nextMove = maze.current.getNextMove(currentPos);
+        if (nextMove) {
+          announcePosition(nextMove);
+        } else {
+          announcePosition("Has llegado al final del laberinto");
+        }
+        return;
+      default:
+        return;
+    }
+
+    if (direction) {
+      e.preventDefault(); 
+      player.current.move(direction);
+    }
+  };
+
+  const announcePosition = (message) => {
+    const announcement = document.getElementById('maze-announcement');
+    if (announcement) {
+      announcement.textContent = message;
+    }
+  };
 
   return (
     <StyledGame>
       {!isGameFinished ? (
         <GameBoard>
           <GameHeader>
-            <TimerContainer>
+            <TimerContainer tabIndex={1} aria-label={`Tiempo restante: ${time}`}>
               <img src={timerImg} alt="Tiempo" />
               <Timer>
                 <span>{time}</span>
               </Timer>
             </TimerContainer>
-            <Lives>
+            <Lives tabIndex={2} aria-label={`${lives} vidas restantes`}>
               {[...Array(lives)].map((_, index) => (
                 <AiFillHeart key={index} color="red" />
               ))}
             </Lives>
           </GameHeader>
 
-          <QuestionSection>
+          <QuestionSection tabIndex={3}>
             <h4>Nivel: {level}</h4>
             <h3>{currentQuestion?.question}</h3>
           </QuestionSection>
 
           <MazeContainer>
-            <MazeCanvas canvasRef={canvasRef} />
+            <div 
+              id="maze-announcement" 
+              className="sr-only" 
+              role="status" 
+              aria-live="polite"
+            ></div>
+            
+            <div 
+              role="application"
+              tabIndex={4}
+              onKeyDown={handleMazeKeyDown}
+              aria-label="Bienvenido al laberinto. Usa las flechas del teclado para moverte. Presiona la barra espaciadora para recibir una pista de la siguiente dirección. IMPORTANTE: Debes continuar en la misma dirección hasta recibir una nueva pista diferente. "
+            >
+              <MazeCanvas canvasRef={canvasRef} />
+            </div>
           </MazeContainer>
+          
           <GameControls>
             <div className="left-controls">
-              <button className="pause-btn" onClick={() => setIsPaused(true)}>
+              <button 
+                className="pause-btn" 
+                onClick={() => setIsPaused(true)}
+                tabIndex={5}
+                aria-label="Pausar juego"
+              >
                 <img src={pauseImg} alt="Botón para pausar el juego" />
               </button>
-              <button className="settings-btn" onClick={() => setIsConfigOpen(true)}>
+              <button 
+                className="settings-btn" 
+                onClick={() => setIsConfigOpen(true)}
+                tabIndex={6}
+                aria-label="Abrir configuración"
+              >
                 <img src={settingsImg} alt="Botón para abrir la configuración" />
               </button>
             </div>
             <div className="right-controls">
-              <button className="fullscreen-btn">
-                <img src={fullScreenImg} alt="Botón para activar pantalla completa" />
-              </button>
             </div>
           </GameControls>
         </GameBoard>

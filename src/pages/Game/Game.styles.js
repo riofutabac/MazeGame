@@ -81,8 +81,6 @@ export const Timer = styled.div`
   }
 `;
 
-
-
 export const Lives = styled.div`
   display: flex;
   gap: 5px;
@@ -106,59 +104,70 @@ export const QuestionSection = styled.div`
 `;
 
 export const MazeContainer = styled.div`
-  flex: 1;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  margin: 20px 0;
+  justify-content: center;
+  margin: 1rem 0;
+  position: relative;
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  canvas {
+    border: 2px solid #2D3648;
+    border-radius: 8px;
+  }
+
+  div[role="application"] {
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(45, 54, 72, 0.3);
+      border-radius: 8px;
+    }
+  }
 `;
 
 export const GameControls = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  padding: 1rem;
   width: 100%;
-
-  margin-top: auto;
 
   .left-controls, .right-controls {
     display: flex;
-    gap: 10px;
-  }
-
-  .left-controls {
-    margin-left: -10px;
-  }
-
-  .right-controls {
-    margin-right: -10px;
-  }
-
-  .left-controls img {
-    width: 30px;
-    height: 30px;
-  }
-
-  .right-controls img {
-    width: 30px;
-    height: 30px;
+    gap: 1rem;
   }
 
   button {
+    background: none;
     border: none;
-    border-radius: 8px;
-    padding: 5px;
-    color: black;
     cursor: pointer;
-    transition: all 0.3s ease;
-    background: transparent;
-  }
+    padding: 8px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
 
-  button:hover {
-    transform: scale(1.05);
-  }
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
 
-  svg {
-    font-size: 20px;
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(45, 54, 72, 0.2);
+    }
+
+    img {
+      width: 56px;
+      height: 56px;
+    }
   }
 `;

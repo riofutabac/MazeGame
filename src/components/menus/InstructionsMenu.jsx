@@ -40,12 +40,20 @@ function InstructionsMenu() {
   const navigate = useNavigate();
 
   return (
-    <InstructionsMenuContainer>
-      <Title>Instrucciones</Title>
-      <InstructionsText>
-        Usa las flechas del teclado para moverte por el laberinto. Encuentra la llave 🔑 para abrir la puerta 🚪 y completar el nivel. Responde correctamente a las preguntas para ganar puntos.
+    <InstructionsMenuContainer role="main">
+      <Title tabIndex={0}>Instrucciones</Title>
+      <InstructionsText tabIndex={0}>
+        Usa las flechas del teclado para moverte por el laberinto. 
+        Encuentra la salida para completar el nivel. 
+        Responde correctamente a las preguntas para ganar puntos.
       </InstructionsText>
-      <BackButton onClick={() => navigate('/')}>Volver al Menú</BackButton>
+      <BackButton 
+        onClick={() => navigate('/')}
+        tabIndex={0}
+        aria-label="Volver al menú principal"
+      >
+        Volver al Menú
+      </BackButton>
     </InstructionsMenuContainer>
   );
 }

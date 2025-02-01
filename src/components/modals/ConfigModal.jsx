@@ -5,7 +5,7 @@ import Modal from '../common/Modal';
 const ConfigMenuContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
   padding: 1rem;
   color: #2D3648;
 `;
@@ -18,20 +18,23 @@ const ConfigOption = styled.div`
   label {
     font-size: 1.1rem;
     color: #2D3648;
-    font-weight: 500;
+    font-weight: bold;
   }
 
   select {
     padding: 0.8rem;
     border-radius: 8px;
-    border: 1px solid #2D3648;
+    border: 2px solid #2D3648;
     font-size: 1rem;
     cursor: pointer;
     color: #2D3648;
+    background: white;
+    width: 100%;
     
     &:focus {
       outline: none;
-      border-color: #2D3648;
+      border-color: #3d4861;
+      box-shadow: 0 0 0 2px rgba(45, 54, 72, 0.2);
     }
   }
 `;
@@ -41,6 +44,7 @@ const ToggleSwitch = styled.div`
   align-items: center;
   gap: 1rem;
   color: #2D3648;
+  margin-top: 0.5rem;
 
   input[type="checkbox"] {
     width: 50px;
@@ -66,11 +70,44 @@ const ToggleSwitch = styled.div`
       top: 2px;
       left: 2px;
       transition: left 0.3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
 
     &:checked:before {
       left: 26px;
     }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(45, 54, 72, 0.2);
+    }
+  }
+
+  span {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+`;
+
+const Button = styled.button`
+  background: #2D3648;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  width: 100%;
+  transition: background 0.3s;
+
+  &:hover {
+    background: #3d4861;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(45, 54, 72, 0.2);
   }
 `;
 
@@ -80,31 +117,32 @@ export default function ConfigModal({ isOpen, onClose }) {
 
   const handleLanguageChange = (e) => {
     setLanguage(e.target.value);
-    // Aquí puedes implementar la lógica para cambiar el idioma
   };
 
   const handleTimerToggle = (e) => {
     setTimerEnabled(e.target.checked);
-    // Aquí puedes implementar la lógica para activar/desactivar el temporizador
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ConfigMenuContainer>
-        <h2>Configuración</h2>
-        
+    <Modal isOpen={isOpen} onClose={onClose} title="Configuración">
+      <ConfigMenuContainer>      
         <ConfigOption>
-          <label>Idioma</label>
-          <select value={language} onChange={handleLanguageChange}>
+          <label htmlFor="language-select">Idioma</label>
+          <select 
+            id="language-select"
+            value={language} 
+            onChange={handleLanguageChange}
+          >
             <option value="es">Español</option>
             <option value="en">English</option>
           </select>
         </ConfigOption>
 
         <ConfigOption>
-          <label>Temporizador</label>
+          <label htmlFor="timer-toggle">Temporizador</label>
           <ToggleSwitch>
             <input 
+              id="timer-toggle"
               type="checkbox" 
               checked={timerEnabled}
               onChange={handleTimerToggle}
@@ -112,7 +150,11 @@ export default function ConfigModal({ isOpen, onClose }) {
             <span>{timerEnabled ? 'Activado' : 'Desactivado'}</span>
           </ToggleSwitch>
         </ConfigOption>
+
+        <Button onClick={onClose}>
+          Guardar y Cerrar
+        </Button>
       </ConfigMenuContainer>
     </Modal>
   );
-} 
+}

@@ -64,5 +64,12 @@ export default function Player(maze, ctx, cellSize, onComplete) {
     }
   };
 
+  this.getCurrentPosition = () => {
+    return {
+      row: this.currentPos.x,
+      col: this.currentPos.y
+    };
+  };
+
   drawPlayer();
-} 
+}
