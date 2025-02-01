@@ -111,16 +111,16 @@ export default function Game() {
     setCellSize(Math.floor(minSide / 10));
   };
 
-  const handleGameComplete = (finalMoves) => {
-    setMoves(finalMoves);
+  const handleMazeComplete = (moves) => {
     setIsGameFinished(true);
-    clearInterval(timerRef.current);
-    setGameStats({
-      moves: finalMoves,
+    announcePosition("¡Felicitaciones! Has solucionado el laberinto.");
+    const stats = {
       time: time,
-      question: currentQuestion,
+      moves: moves,
       level: level
-    });
+    };
+    console.log('Completing maze with level:', level);
+    setGameStats(stats);
   };
 
   const generateMaze = () => {
@@ -136,7 +136,7 @@ export default function Game() {
       newMaze,
       ctx,
       Math.floor(canvasRef.current.width / 10),
-      handleGameComplete
+      handleMazeComplete
     );
 
     setMaze(newMaze);

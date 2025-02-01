@@ -79,7 +79,7 @@ function LevelSelect() {
             poner a prueba lo que ya sabes!
           </p>
           <button 
-            onClick={() => handleLevelSelect('easy')}
+            onClick={() => handleLevelSelect(1)}
             tabIndex={0}
             aria-label="Jugar nivel fácil"
           >
@@ -100,7 +100,7 @@ function LevelSelect() {
             no te preocupes, ¡estás listo para el reto!
           </p>
           <button 
-            onClick={() => handleLevelSelect('medium')}
+            onClick={() => handleLevelSelect(2)}
             tabIndex={0}
             aria-label="Jugar nivel medio"
           >
@@ -109,7 +109,7 @@ function LevelSelect() {
         </LevelCard>
 
         <LevelCard 
-          bgColor="#FF5252"
+          bgColor="#FF3B30"
           role="listitem"
           tabIndex={0}
           aria-label="Nivel Difícil"
@@ -117,11 +117,11 @@ function LevelSelect() {
           <h1 tabIndex={0}>Difícil</h1>
           <img src={imagenLaberintoMuestra} alt="Laberinto de nivel difícil" tabIndex={0} />
           <p tabIndex={0}>
-            Este es el nivel para los verdaderos expertos. Las preguntas son complicadas, pero con
-            tu conocimiento y habilidad, seguro que puedes con ellas. ¡A darlo todo!
+            Este es el nivel más desafiante. ¡Las preguntas son más complejas y necesitarás todo
+            tu conocimiento! ¿Estás preparado para el desafío?
           </p>
           <button 
-            onClick={() => handleLevelSelect('hard')}
+            onClick={() => handleLevelSelect(3)}
             tabIndex={0}
             aria-label="Jugar nivel difícil"
           >
