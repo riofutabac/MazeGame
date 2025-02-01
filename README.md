@@ -107,11 +107,6 @@ Los archivos se generarán en la carpeta `dist/`
 
 ## 👥 Equipo de Desarrollo
 - [Alexis Lapo](https://github.com/riofutabac) - Desarrollador Principal
-- [María González](https://github.com/mariagonzalez) - Diseñadora UI/UX
-- [Carlos Ruiz](https://github.com/carlosruiz) - Desarrollador Frontend
-- [Ana Martínez](https://github.com/anamartinez) - QA y Testing
-
-
----
-Desarrollado con ❤️ por el equipo de MazeGame
-
+- [Santiago Bejarano](https://github.com/santiagobejarano) - QA y Testing
+- [Isaac Friedman](https://github.com/IsaacFriedman) - Desarrollador Frontend
+- [Matías Mejía](https://github.com/mtmatias1282) - Diseñador UI/UX
