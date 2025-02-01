@@ -69,6 +69,16 @@ export default function Game() {
     }
   }, [level, currentQuestion]);
 
+  useEffect(() => {
+    if (!isPaused && !isGameFinished && player) {
+      announcePosition(
+        "Bienvenido al laberinto. Usa las flechas del teclado para moverte." +
+        "Presiona la barra espaciadora para recibir una pista de la siguiente dirección. IMPORTANTE: Debes continuar en la misma dirección hasta recibir una nueva pista diferente. " +
+        "El objetivo es llegar al final del laberinto."
+      );
+    }
+  }, [player]);
+
   // Temporizador
   useEffect(() => {
     if (!isPaused && !isGameFinished && secondsLeft > 0) {
@@ -167,6 +177,17 @@ export default function Game() {
       case 'ArrowRight':
         direction = 'right';
         break;
+      case ' ': // Tecla espaciadora
+      case 'Enter':
+        // Obtener y anunciar el siguiente movimiento
+        const currentPos = player.getCurrentPosition();
+        const nextMove = maze.getNextMove(currentPos);
+        if (nextMove) {
+          announcePosition(nextMove);
+        } else {
+          announcePosition("Has llegado al final del laberinto");
+        }
+        return;
       default:
         return;
     }
@@ -174,9 +195,6 @@ export default function Game() {
     if (direction) {
       e.preventDefault(); // Prevenir el scroll
       player.move(direction);
-      const currentPosition = player.getCurrentPosition();
-      const announcement = `Movimiento ${direction}. Posición actual: fila ${currentPosition.row + 1}, columna ${currentPosition.col + 1}`;
-      announcePosition(announcement);
     }
   };
 
@@ -223,7 +241,7 @@ export default function Game() {
               role="application"
               tabIndex={4}
               onKeyDown={handleMazeKeyDown}
-              aria-label="Laberinto del juego. Usa las flechas del teclado para moverte. Estás en la posición inicial."
+              aria-label="Bienvenido al laberinto. Usa las flechas del teclado para moverte. Presiona la barra espaciadora para recibir una pista de la siguiente dirección. IMPORTANTE: Debes continuar en la misma dirección hasta recibir una nueva pista diferente. "
             >
               <MazeCanvas canvasRef={canvasRef} />
             </div>
@@ -249,17 +267,6 @@ export default function Game() {
               </button>
             </div>
             <div className="right-controls">
-              <button 
-                className="fullscreen-btn"
-                onClick={toggleFullScreen}
-                tabIndex={7}
-                aria-label={isFullscreen ? "Salir de pantalla completa" : "Activar pantalla completa"}
-              >
-                <img 
-                  src={fullScreenImg} 
-                  alt={isFullscreen ? "Salir de pantalla completa" : "Activar pantalla completa"} 
-                />
-              </button>
             </div>
           </GameControls>
         </GameBoard>
