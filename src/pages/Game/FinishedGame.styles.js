@@ -167,7 +167,7 @@ export const Timer = styled.div`
 
 export const AnswersContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   gap: 25px;
   margin: 1rem auto;
   width: 95%;

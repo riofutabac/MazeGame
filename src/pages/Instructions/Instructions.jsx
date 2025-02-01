@@ -57,15 +57,21 @@ export default function Instructions() {
   const navigate = useNavigate();
 
   return (
-    <InstructionsContainer>
-      <Title>Instrucciones del Juego</Title>
-      <InstructionsList>
-        <p>Selecciona la dificultad de las preguntas.</p>
-        <p>Lee la pregunta que aparecerá en la pantalla.</p>
-        <p>Corre hacia la zona de la respuesta correcta evitando los enemigos.</p>
-        <p>¡Gana puntos y avanza!</p>
+    <InstructionsContainer role="main">
+      <Title tabIndex={0}>Instrucciones del Juego</Title>
+      <InstructionsList role="list">
+        <p tabIndex={0} role="listitem">Selecciona la dificultad de las preguntas.</p>
+        <p tabIndex={0} role="listitem">Lee la pregunta que aparecerá en la pantalla.</p>
+        <p tabIndex={0} role="listitem">Corre hacia la zona de la respuesta correcta evitando los enemigos.</p>
+        <p tabIndex={0} role="listitem">¡Gana puntos y avanza!</p>
       </InstructionsList>
-      <BackButton onClick={() => navigate(-1)}>Volver</BackButton>
+      <BackButton 
+        onClick={() => navigate(-1)}
+        tabIndex={0}
+        aria-label="Volver al menú anterior"
+      >
+        Volver
+      </BackButton>
     </InstructionsContainer>
   );
-} 
+}

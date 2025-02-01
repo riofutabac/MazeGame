@@ -92,6 +92,58 @@ export default function MazeGenerator(width, height) {
     }
   };
 
+  this.getNextMove = function(currentPos) {
+    // Usar BFS para encontrar el camino más corto al final
+    const queue = [{
+      pos: { row: currentPos.row, col: currentPos.col },
+      path: []
+    }];
+    const visited = new Set();
+    
+    while (queue.length > 0) {
+      const current = queue.shift();
+      const key = `${current.pos.row},${current.pos.col}`;
+      
+      if (visited.has(key)) continue;
+      visited.add(key);
+      
+      // Si llegamos al final, retornamos el primer movimiento del camino
+      if (current.pos.row === this.endCoord.x && current.pos.col === this.endCoord.y) {
+        return current.path[0];
+      }
+      
+      const cell = this.mazeMap[current.pos.row][current.pos.col];
+      
+      // Agregar todos los movimientos posibles
+      if (cell.n) {
+        queue.push({
+          pos: { row: current.pos.row - 1, col: current.pos.col },
+          path: [...current.path, 'arriba']
+        });
+      }
+      if (cell.s) {
+        queue.push({
+          pos: { row: current.pos.row + 1, col: current.pos.col },
+          path: [...current.path, 'abajo']
+        });
+      }
+      if (cell.w) {
+        queue.push({
+          pos: { row: current.pos.row, col: current.pos.col - 1 },
+          path: [...current.path, 'izquierda']
+        });
+      }
+      if (cell.e) {
+        queue.push({
+          pos: { row: current.pos.row, col: current.pos.col + 1 },
+          path: [...current.path, 'derecha']
+        });
+      }
+    }
+    
+    return null;
+  };
+
   this.initMap();
   this.defineStartEnd();
   this.carveMaze();
