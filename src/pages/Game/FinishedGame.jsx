@@ -67,13 +67,16 @@ function FinishedGame({ stats }) {
   const [currentLevel, setCurrentLevel] = useState(level);
   
   useEffect(() => {
-    // Usar el nivel del contexto o el que viene de stats
+    console.log('Stats recibidos en FinishedGame:', stats);
+    console.log('Tiempo recibido:', stats?.time);
     const gameLevel = stats?.level || level;
     setCurrentLevel(gameLevel);
-    console.log('Setting level in FinishedGame:', gameLevel);
   }, [level, stats]);
 
   const levelContent = getLevelContent(currentLevel);
+
+  // Asegurarnos de que tenemos el tiempo antes de renderizar
+  console.log('Tiempo que se va a mostrar:', stats?.time || "00:00");
 
   return (
     <LevelSelectContainer>
@@ -103,9 +106,19 @@ function FinishedGame({ stats }) {
 
       <GameStats>
         <TimerContainer>
-          <img src={timerImg} alt="Botón para abrir la configuración" />
+          <img src={timerImg} alt="Tiempo" />
           <Timer>
-            <span tabIndex={5}>{stats?.time || "00:00"}</span>
+            <span 
+              tabIndex={5}
+              aria-label={(() => {
+                const [minutes, seconds] = (stats?.time || "00:00").split(":");
+                const minutesText = minutes === "01" ? "minuto" : "minutos";
+                const secondsText = seconds === "01" ? "segundo" : "segundos";
+                return `Tiempo completado: ${parseInt(minutes)} ${minutesText}, ${parseInt(seconds)} ${secondsText}`;
+              })()}
+            >
+              {stats?.time || "00:00"}
+            </span>
           </Timer>
         </TimerContainer>
       </GameStats>

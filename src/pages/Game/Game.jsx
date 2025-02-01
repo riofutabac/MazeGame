@@ -41,16 +41,17 @@ export default function Game() {
   const [isSoundOpen, setIsSoundOpen] = useState(false);
   const [moves, setMoves] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(300); // 5 minutos en segundos
+  const [secondsLeft, setSecondsLeft] = useState(300);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [startTime] = useState(Date.now());
 
   const canvasRef = useRef(null);
   const [cellSize, setCellSize] = useState(20);
   const timerRef = useRef(null);
 
-  const [maze, setMaze] = useState(null);
-  const [drawer, setDrawer] = useState(null);
-  const [player, setPlayer] = useState(null);
+  const maze = useRef(null);
+  const drawer = useRef(null);
+  const player = useRef(null);
 
   useEffect(() => {
     handleResize();
@@ -70,7 +71,7 @@ export default function Game() {
   }, [level, currentQuestion]);
 
   useEffect(() => {
-    if (!isPaused && !isGameFinished && player) {
+    if (!isPaused && !isGameFinished && player.current) {
       announcePosition(
         "Bienvenido al laberinto. Usa las flechas del teclado para moverte." +
         "Presiona la barra espaciadora para recibir una pista de la siguiente dirección. IMPORTANTE: Debes continuar en la misma dirección hasta recibir una nueva pista diferente. " +
@@ -79,27 +80,47 @@ export default function Game() {
     }
   }, [player]);
 
-  // Temporizador
   useEffect(() => {
-    if (!isPaused && !isGameFinished && secondsLeft > 0) {
+    if (!isPaused && !isGameFinished) {
       timerRef.current = setInterval(() => {
-        setSecondsLeft(prev => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current);
-            setIsGameFinished(true);
-            return 0;
-          }
-          const newSeconds = prev - 1;
-          const minutes = Math.floor(newSeconds / 60);
-          const seconds = newSeconds % 60;
-          setTime(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-          return newSeconds;
-        });
+        const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+        const remaining = Math.max(300 - elapsedSeconds, 0);
+        
+        setSecondsLeft(remaining);
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        setTime(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+
+        if (remaining <= 0) {
+          clearInterval(timerRef.current);
+          setIsGameFinished(true);
+        }
       }, 1000);
 
       return () => clearInterval(timerRef.current);
     }
-  }, [isPaused, isGameFinished, secondsLeft]);
+  }, [isPaused, isGameFinished, startTime]);
+
+  const handleMazeComplete = (moves) => {
+    clearInterval(timerRef.current);
+    const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const timeSpent = Math.min(elapsedSeconds, 300);
+    
+    console.log('Tiempo transcurrido en segundos:', timeSpent);
+    const minutes = Math.floor(timeSpent / 60);
+    const seconds = timeSpent % 60;
+    const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    const stats = {
+      time: formattedTime,
+      moves: moves,
+      level: level
+    };
+    console.log('Stats completos:', stats);
+    setGameStats(stats);
+    setIsGameFinished(true);
+    announcePosition("¡Felicitaciones! Has solucionado el laberinto.");
+  };
 
   const handleResize = () => {
     if (!canvasRef.current) return;
@@ -111,22 +132,10 @@ export default function Game() {
     setCellSize(Math.floor(minSide / 10));
   };
 
-  const handleMazeComplete = (moves) => {
-    setIsGameFinished(true);
-    announcePosition("¡Felicitaciones! Has solucionado el laberinto.");
-    const stats = {
-      time: time,
-      moves: moves,
-      level: level
-    };
-    console.log('Completing maze with level:', level);
-    setGameStats(stats);
-  };
-
   const generateMaze = () => {
     setShowModal(false);
     setMoves(0);
-    setSecondsLeft(300); // Reiniciar temporizador a 5 minutos
+    setSecondsLeft(300); 
     setTime('05:00');
 
     const newMaze = new MazeGenerator(10, 10);
@@ -139,9 +148,9 @@ export default function Game() {
       handleMazeComplete
     );
 
-    setMaze(newMaze);
-    setDrawer(newDrawer);
-    setPlayer(newPlayer);
+    maze.current = newMaze;
+    drawer.current = newDrawer;
+    player.current = newPlayer;
   };
 
   const toggleFullScreen = () => {
@@ -161,7 +170,7 @@ export default function Game() {
   };
 
   const handleMazeKeyDown = (e) => {
-    if (!player || isPaused || isGameFinished) return;
+    if (!player.current || isPaused || isGameFinished) return;
     
     let direction = null;
     switch (e.key) {
@@ -177,11 +186,10 @@ export default function Game() {
       case 'ArrowRight':
         direction = 'right';
         break;
-      case ' ': // Tecla espaciadora
+      case ' ': 
       case 'Enter':
-        // Obtener y anunciar el siguiente movimiento
-        const currentPos = player.getCurrentPosition();
-        const nextMove = maze.getNextMove(currentPos);
+        const currentPos = player.current.getCurrentPosition();
+        const nextMove = maze.current.getNextMove(currentPos);
         if (nextMove) {
           announcePosition(nextMove);
         } else {
@@ -193,8 +201,8 @@ export default function Game() {
     }
 
     if (direction) {
-      e.preventDefault(); // Prevenir el scroll
-      player.move(direction);
+      e.preventDefault(); 
+      player.current.move(direction);
     }
   };
 
@@ -229,7 +237,6 @@ export default function Game() {
           </QuestionSection>
 
           <MazeContainer>
-            {/* Elemento para anuncios de lectores de pantalla */}
             <div 
               id="maze-announcement" 
               className="sr-only" 
