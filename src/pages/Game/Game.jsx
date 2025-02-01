@@ -133,57 +133,119 @@ export default function Game() {
 
   return (
     <StyledGame>
-      {!isGameFinished ? (
-        <GameBoard>
-          <GameHeader>
-            <TimerContainer>
-              <img src={timerImg} alt="Tiempo" />
-              <Timer>
-                <span>{time}</span>
-              </Timer>
-            </TimerContainer>
-            <Lives>
-              {[...Array(lives)].map((_, index) => (
-                <AiFillHeart key={index} color="red" />
-              ))}
-            </Lives>
-          </GameHeader>
+      <GameHeader role="banner">
+        <GameControls>
+          <button 
+            onClick={() => setIsPaused(true)} 
+            aria-label="Pausar juego"
+            tabIndex={1}
+          >
+            <FaPause />
+          </button>
+          <button 
+            onClick={() => setIsConfigOpen(true)} 
+            aria-label="Abrir configuración"
+            tabIndex={2}
+          >
+            <FaCog />
+          </button>
+          <button 
+            onClick={() => {
+              // Implementar función para activar pantalla completa
+            }} 
+            aria-label="Pantalla completa"
+            tabIndex={3}
+          >
+            <FaExpand />
+          </button>
+        </GameControls>
 
-          <QuestionSection>
-            <h4>Nivel: {level}</h4>
-            <h3>{currentQuestion?.question}</h3>
-          </QuestionSection>
+        <TimerContainer role="timer" aria-label="Tiempo de juego">
+          <FaClock aria-hidden="true" />
+          <Timer>{time}</Timer>
+        </TimerContainer>
 
-          <MazeContainer>
-            <MazeCanvas canvasRef={canvasRef} />
-          </MazeContainer>
-          <GameControls>
-            <div className="left-controls">
-              <button className="pause-btn" onClick={() => setIsPaused(true)}>
-                <img src={pauseImg} alt="Botón para pausar el juego" />
-              </button>
-              <button className="settings-btn" onClick={() => setIsConfigOpen(true)}>
-                <img src={settingsImg} alt="Botón para abrir la configuración" />
-              </button>
-            </div>
-            <div className="right-controls">
-              <button className="fullscreen-btn">
-                <img src={fullScreenImg} alt="Botón para activar pantalla completa" />
-              </button>
-            </div>
-          </GameControls>
-        </GameBoard>
-      ) : (
-        <FinishedGame stats={gameStats} onBackToMenu={() => navigate('/')} />
+        <Lives role="status" aria-label={`${lives} vidas restantes`}>
+          {Array.from({ length: lives }).map((_, index) => (
+            <AiFillHeart key={index} aria-hidden="true" />
+          ))}
+        </Lives>
+      </GameHeader>
+
+      {currentQuestion && (
+        <QuestionSection role="region" aria-label="Pregunta actual">
+          <h2 tabIndex={4}>{currentQuestion.question}</h2>
+        </QuestionSection>
       )}
 
-      <PauseModal
-        isOpen={isPaused}
-        onClose={() => setIsPaused(false)}
-        onResume={() => setIsPaused(false)}
-      />
-      <ConfigModal isOpen={isConfigOpen} onClose={() => setIsConfigOpen(false)} />
-      <SoundModal isOpen={isSoundOpen} onClose={() => setIsSoundOpen(false)} />
+      <GameBoard>
+        <MazeContainer 
+          role="application" 
+          aria-label="Laberinto del juego"
+        >
+          <MazeCanvas 
+            ref={canvasRef} 
+            tabIndex={5}
+            aria-label="Canvas del laberinto. Use las flechas del teclado para mover al jugador"
+            onKeyDown={handleKeyDown}
+          />
+        </MazeContainer>
+      </GameBoard>
+
+      {showModal && (
+        <MessageModal 
+          message={currentQuestion?.feedback || ''} 
+          onClose={() => setShowModal(false)}
+          tabIndex={6}
+          role="dialog"
+          aria-modal="true"
+        />
+      )}
+
+      {isPaused && (
+        <PauseModal 
+          onClose={() => setIsPaused(false)}
+          onResume={() => setIsPaused(false)}
+          tabIndex={7}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menú de pausa"
+        />
+      )}
+
+      {isConfigOpen && (
+        <ConfigModal 
+          onClose={() => setIsConfigOpen(false)}
+          onSoundSettings={() => {
+            setIsConfigOpen(false);
+            setIsSoundOpen(true);
+          }}
+          tabIndex={8}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Configuración del juego"
+        />
+      )}
+
+      {isSoundOpen && (
+        <SoundModal 
+          onClose={() => setIsSoundOpen(false)}
+          tabIndex={9}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Configuración de sonido"
+        />
+      )}
+
+      {isGameFinished && (
+        <FinishedGame 
+          stats={gameStats}
+          tabIndex={10}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Juego terminado"
+        />
+      )}
     </StyledGame>
   );
 }

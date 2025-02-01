@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import fondoTitulo from '../../assets/images/fondo-titulo.webp';
 import buttonSettings from '../../assets/images/boton-config.webp';
 import butttonInstructions from '../../assets/images/boton-instrucciones.webp';
+import volumenUp from '../../assets/images/volumenup.webp';
 import ConfigModal from '../../components/modals/ConfigModal';
 import SoundModal from '../../components/modals/SoundModal';
+import { announceToScreenReader } from '../../utils/accessibility';
 import './Home.css';
 
 function Home() {
@@ -12,11 +14,14 @@ function Home() {
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [isSoundOpen, setIsSoundOpen] = useState(false);
 
+  // Anunciar el título cuando se carga la página
+  useEffect(() => {
+    announceToScreenReader('Persecución en el Laberinto');
+  }, []);
+
   const handleExit = () => {
-    // Aquí puedes agregar una confirmación antes de salir
     if (window.confirm('¿Estás seguro que deseas salir del juego?')) {
-      window.close(); // Esto puede no funcionar en todos los navegadores
-      // Alternativa: navigate('/exit') si tienes una página de salida
+      window.close();
     }
   };
 
@@ -28,8 +33,15 @@ function Home() {
           src={fondoTitulo}
           alt="Fondo del Laberinto" 
           className="header-image" 
+          aria-hidden="true"
         />
-        <h1 className="header-text">Persecución en el Laberinto</h1>
+        <h1 
+          className="header-text"
+          tabIndex={0}
+          aria-label="Persecución en el Laberinto"
+        >
+          Persecución en el Laberinto
+        </h1>
       </div>
 
       {/* Botones centrados */}
@@ -65,18 +77,36 @@ function Home() {
         className="corner-button right" 
         onClick={() => setIsSoundOpen(true)}
       >
-        <img src={butttonInstructions} alt="Sonido" />
+        <img src={volumenUp} alt="Sonido" />
       </button>
 
       {/* Modales */}
-      <ConfigModal 
-        isOpen={isConfigOpen}
-        onClose={() => setIsConfigOpen(false)}
-      />
-      <SoundModal 
-        isOpen={isSoundOpen}
-        onClose={() => setIsSoundOpen(false)}
-      />
+      {isConfigOpen && (
+        <div 
+          className="modal-container"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="config-title"
+        >
+          <ConfigModal 
+            onClose={() => setIsConfigOpen(false)}
+            isOpen={isConfigOpen}
+          />
+        </div>
+      )}
+      {isSoundOpen && (
+        <div 
+          className="modal-container"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="sound-title"
+        >
+          <SoundModal 
+            onClose={() => setIsSoundOpen(false)}
+            isOpen={isSoundOpen}
+          />
+        </div>
+      )}
     </div>
   );
 }
