@@ -14,7 +14,6 @@ export const HeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-
 `;
 
 export const NavigationButtons = styled.div`
@@ -31,14 +30,20 @@ export const IconButton = styled.button`
   align-items: center;
   justify-content: center;
   transition: transform 0.2s;
+  border-radius: 8px;
 
   img {
-     width: 80px;      
+    width: 80px;      
     height: 80px;   
   }
 
   &:hover {
     transform: scale(1.05); 
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(45, 54, 72, 0.4);
   }
 `;
 
@@ -47,7 +52,12 @@ export const Title = styled.h1`
   color: var(--text-color);
   text-align: center;
   flex-grow: 1;
-  font-weight: 400;  
+  font-weight: 400;
+  
+  &:focus {
+    outline: none;
+    text-decoration: underline;
+  }
 `;
 
 export const LevelSelectMenuContainer = styled.div`
@@ -76,6 +86,13 @@ export const LevelCard = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
   border: 2px solid #000;
+  transition: transform 0.2s;
+
+  &:focus {
+    outline: none;
+    transform: scale(1.02);
+    box-shadow: 0 0 0 3px rgba(45, 54, 72, 0.4);
+  }
 
   h1 {
     position: absolute;
@@ -89,34 +106,56 @@ export const LevelCard = styled.div`
       1px -1px 0 #000, 
       -1px 1px 0 #000, 
       1px 1px 0 #000;
+
+    &:focus {
+      outline: none;
+      text-decoration: underline;
+    }
   }
 
   img {
     width: 150px;
     height: 150px;
     margin: 60px 0 20px;
+    border-radius: 8px;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(45, 54, 72, 0.4);
+    }
   }
 
   p {
     margin: 20px 0;
     font-size: 1.1rem;
     line-height: 1.5;
-    color: #2D3648;
+    padding: 0 20px;
+
+    &:focus {
+      outline: none;
+      text-decoration: underline;
+    }
   }
 
   button {
-    margin-top: auto;
-    padding: 12px 30px;
-    background-color: #2D3648;
+    background: #2D3648;
     color: white;
     border: none;
-    border-radius: 5px;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1.2rem;
     cursor: pointer;
-    font-size: 1.1rem;
-    transition: background-color 0.2s;
+    transition: background 0.2s;
+    margin-top: auto;
+    width: 80%;
 
     &:hover {
-      background-color: #404A5F;
+      background: #3d4861;
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(45, 54, 72, 0.4);
     }
   }
 `;
