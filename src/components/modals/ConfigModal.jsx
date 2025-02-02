@@ -125,33 +125,29 @@ export default function ConfigModal({ isOpen, onClose }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Configuración">
-      <ConfigMenuContainer>      
+      <ConfigMenuContainer role="dialog" aria-label="Menú de configuración">      
         <ConfigOption>
-          <label htmlFor="language-select">Idioma</label>
-          <select 
-            id="language-select"
-            value={language} 
-            onChange={handleLanguageChange}
-          >
-            <option value="es">Español</option>
-            <option value="en">English</option>
-          </select>
-        </ConfigOption>
-
-        <ConfigOption>
-          <label htmlFor="timer-toggle">Temporizador</label>
+          <label htmlFor="timer-toggle" tabIndex={0}>Temporizador</label>
           <ToggleSwitch>
             <input 
               id="timer-toggle"
               type="checkbox" 
               checked={timerEnabled}
               onChange={handleTimerToggle}
+              tabIndex={0}
+              aria-label={`Temporizador ${timerEnabled ? 'activado' : 'desactivado'}`}
             />
-            <span>{timerEnabled ? 'Activado' : 'Desactivado'}</span>
+            <span role="status" aria-live="polite" tabIndex={0}>
+              {timerEnabled ? 'Activado' : 'Desactivado'}
+            </span>
           </ToggleSwitch>
         </ConfigOption>
 
-        <Button onClick={onClose}>
+        <Button 
+          onClick={onClose}
+          tabIndex={0}
+          aria-label="Guardar configuración y cerrar menú"
+        >
           Guardar y Cerrar
         </Button>
       </ConfigMenuContainer>

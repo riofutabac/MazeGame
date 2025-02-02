@@ -50,19 +50,17 @@ export default function Modal({ isOpen, onClose, title, children }) {
 
   useEffect(() => {
     if (isOpen) {
-      // Guardar el elemento que tenía el foco antes de abrir el modal
       previousFocus.current = document.activeElement;
       
-      // Deshabilitar el tabindex de todos los elementos fuera del modal
       const outsideElements = document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
       outsideElements.forEach(element => {
         if (!modalRef.current?.contains(element)) {
           element.setAttribute('data-previous-tabindex', element.getAttribute('tabindex') || '0');
           element.setAttribute('tabindex', '-1');
+          element.setAttribute('aria-hidden', 'true');
         }
       });
 
-      // Manejar el evento keydown para el Tab
       const handleTabKey = (e) => {
         if (e.key === 'Tab') {
           const focusableElements = modalRef.current.querySelectorAll(
@@ -88,17 +86,14 @@ export default function Modal({ isOpen, onClose, title, children }) {
       document.addEventListener('keydown', handleTabKey);
       return () => {
         document.removeEventListener('keydown', handleTabKey);
-        
-        // Restaurar el tabindex de los elementos fuera del modal
         outsideElements.forEach(element => {
           const previousTabIndex = element.getAttribute('data-previous-tabindex');
           if (previousTabIndex) {
             element.setAttribute('tabindex', previousTabIndex);
             element.removeAttribute('data-previous-tabindex');
+            element.removeAttribute('aria-hidden');
           }
         });
-
-        // Restaurar el foco al elemento anterior
         if (previousFocus.current) {
           previousFocus.current.focus();
         }
@@ -109,12 +104,25 @@ export default function Modal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
 
   return (
-    <ModalOverlay>
-      <ModalContent ref={modalRef} role="dialog" aria-modal="true">
-        <CloseButton onClick={onClose}>
-          <img src={iconoCerrar} alt="Cerrar" />
+    <ModalOverlay 
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <ModalContent 
+        ref={modalRef}
+        onClick={e => e.stopPropagation()}
+        role="document"
+      >
+        <h2 id="modal-title" tabIndex={0}>{title}</h2>
+        <CloseButton 
+          onClick={onClose}
+          aria-label="Cerrar modal"
+          tabIndex={0}
+        >
+          <img src={iconoCerrar} alt="" />
         </CloseButton>
-        <h2>{title}</h2>
         {children}
       </ModalContent>
     </ModalOverlay>

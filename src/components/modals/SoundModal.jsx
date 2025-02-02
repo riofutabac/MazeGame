@@ -124,12 +124,16 @@ export default function SoundModal({ isOpen, onClose }) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Configuración de Audio">
-      <SoundMenuContainer>       
+      <SoundMenuContainer role="dialog" aria-label="Menú de configuración de audio">       
         <VolumeControl>
-          <label htmlFor="music-volume">Música</label>
-          <div className="volume-slider">
-            <button aria-label="Silenciar música">
-              <img src={volumenDown} alt="Silenciar" />
+          <label htmlFor="music-volume" tabIndex={0}>Música</label>
+          <div className="volume-slider" role="group" aria-label="Control de volumen de música">
+            <button 
+              onClick={() => setMusicVolume(0)}
+              aria-label="Silenciar música"
+              tabIndex={0}
+            >
+              <img src={volumenDown} alt="" />
             </button>
             <input 
               type="range" 
@@ -138,18 +142,31 @@ export default function SoundModal({ isOpen, onClose }) {
               max="100" 
               value={musicVolume}
               onChange={(e) => setMusicVolume(e.target.value)}
+              tabIndex={0}
+              aria-label={`Volumen de música: ${musicVolume}%`}
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={musicVolume}
             />
-            <button aria-label="Volumen máximo de música">
-              <img src={volumenUp} alt="Volumen máximo" />
+            <button 
+              onClick={() => setMusicVolume(100)}
+              aria-label="Volumen máximo de música"
+              tabIndex={0}
+            >
+              <img src={volumenUp} alt="" />
             </button>
           </div>
         </VolumeControl>
 
         <VolumeControl>
-          <label htmlFor="effects-volume">Efectos de Sonido</label>
-          <div className="volume-slider">
-            <button aria-label="Silenciar efectos">
-              <img src={volumenDown} alt="Silenciar" />
+          <label htmlFor="effects-volume" tabIndex={0}>Efectos de Sonido</label>
+          <div className="volume-slider" role="group" aria-label="Control de volumen de efectos">
+            <button 
+              onClick={() => setEffectsVolume(0)}
+              aria-label="Silenciar efectos"
+              tabIndex={0}
+            >
+              <img src={volumenDown} alt="" />
             </button>
             <input 
               type="range" 
@@ -158,22 +175,33 @@ export default function SoundModal({ isOpen, onClose }) {
               max="100" 
               value={effectsVolume}
               onChange={(e) => setEffectsVolume(e.target.value)}
+              tabIndex={0}
+              aria-label={`Volumen de efectos: ${effectsVolume}%`}
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={effectsVolume}
             />
-            <button aria-label="Volumen máximo de efectos">
-              <img src={volumenUp} alt="Volumen máximo" />
+            <button 
+              onClick={() => setEffectsVolume(100)}
+              aria-label="Volumen máximo de efectos"
+              tabIndex={0}
+            >
+              <img src={volumenUp} alt="" />
             </button>
           </div>
         </VolumeControl>
 
-        <div>
+        <div role="group" aria-label="Opciones de sonido">
           <SoundOption>
             <input 
               type="checkbox"
               id="music-enabled"
               checked={musicEnabled}
               onChange={(e) => setMusicEnabled(e.target.checked)}
+              tabIndex={0}
+              aria-label={`Música de fondo ${musicEnabled ? 'activada' : 'desactivada'}`}
             />
-            <label htmlFor="music-enabled">Música de Fondo</label>
+            <label htmlFor="music-enabled" tabIndex={0}>Música de Fondo</label>
           </SoundOption>
 
           <SoundOption>
@@ -182,12 +210,18 @@ export default function SoundModal({ isOpen, onClose }) {
               id="effects-enabled"
               checked={effectsEnabled}
               onChange={(e) => setEffectsEnabled(e.target.checked)}
+              tabIndex={0}
+              aria-label={`Efectos de sonido ${effectsEnabled ? 'activados' : 'desactivados'}`}
             />
-            <label htmlFor="effects-enabled">Efectos de Sonido</label>
+            <label htmlFor="effects-enabled" tabIndex={0}>Efectos de Sonido</label>
           </SoundOption>
         </div>
 
-        <Button onClick={onClose}>
+        <Button 
+          onClick={onClose}
+          tabIndex={0}
+          aria-label="Guardar configuración de audio y cerrar menú"
+        >
           Guardar y Cerrar
         </Button>
       </SoundMenuContainer>
