@@ -1,11 +1,12 @@
 import { Coordinate, shuffle } from './utils';
 
-export default function MazeGenerator(width, height) {
+export default function MazeGenerator(width, height, level = 1) {
   this.mazeMap = [];
   this.width = width;
   this.height = height;
   this.startCoord = null;
   this.endCoord = null;
+  this.level = level;
 
   const dirs = ['n', 's', 'e', 'w'];
   const modDir = {
@@ -109,34 +110,42 @@ export default function MazeGenerator(width, height) {
       
       // Si llegamos al final, retornamos el primer movimiento del camino
       if (current.pos.row === this.endCoord.x && current.pos.col === this.endCoord.y) {
-        return current.path[0];
+        // Traducir la dirección al español para el anuncio
+        const direction = current.path[0];
+        const translations = {
+          'up': 'Arriba',
+          'down': 'Abajo',
+          'left': 'Izquierda',
+          'right': 'Derecha'
+        };
+        return translations[direction] || direction;
       }
       
       const cell = this.mazeMap[current.pos.row][current.pos.col];
       
-      // Agregar todos los movimientos posibles
+      // Agregar todos los movimientos posibles usando las direcciones en inglés
       if (cell.n) {
         queue.push({
           pos: { row: current.pos.row - 1, col: current.pos.col },
-          path: [...current.path, 'arriba']
+          path: [...current.path, 'up']
         });
       }
       if (cell.s) {
         queue.push({
           pos: { row: current.pos.row + 1, col: current.pos.col },
-          path: [...current.path, 'abajo']
+          path: [...current.path, 'down']
         });
       }
       if (cell.w) {
         queue.push({
           pos: { row: current.pos.row, col: current.pos.col - 1 },
-          path: [...current.path, 'izquierda']
+          path: [...current.path, 'left']
         });
       }
       if (cell.e) {
         queue.push({
           pos: { row: current.pos.row, col: current.pos.col + 1 },
-          path: [...current.path, 'derecha']
+          path: [...current.path, 'right']
         });
       }
     }

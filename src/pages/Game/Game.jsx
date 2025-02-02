@@ -138,7 +138,7 @@ export default function Game() {
     setSecondsLeft(300); 
     setTime('05:00');
 
-    const newMaze = new MazeGenerator(10, 10);
+    const newMaze = new MazeGenerator(10, 10, level);
     const ctx = canvasRef.current.getContext('2d');
     const newDrawer = new DrawMaze(newMaze, ctx, Math.floor(canvasRef.current.width / 10));
     const newPlayer = new Player(

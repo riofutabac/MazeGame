@@ -1,8 +1,24 @@
+import moonImg from '../assets/images/moon.webp';
+import sunImg from '../assets/images/sun.webp';
+import earthkImg from '../assets/images/respuestaPrueba.webp';
+
 export default function DrawMaze(maze, ctx, cellSize) {
   this.map = maze.mazeMap;
   this.width = maze.width;
   this.height = maze.height;
   this.endCoord = maze.endCoord;
+  this.level = maze.level;
+
+  // Precargar las imágenes
+  const images = {
+    1: new Image(),
+    2: new Image(),
+    3: new Image()
+  };
+
+  images[1].src = earthkImg;
+  images[2].src = moonImg;
+  images[3].src = sunImg;
 
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
@@ -45,7 +61,22 @@ export default function DrawMaze(maze, ctx, cellSize) {
   if (this.endCoord) {
     const endX = this.endCoord.y * cellSize;
     const endY = this.endCoord.x * cellSize;
-    ctx.fillStyle = '#0f0';
-    ctx.fillRect(endX + 4, endY + 4, cellSize - 8, cellSize - 8);
+    const padding = cellSize * 0.1; // 10% de padding
+    const imageSize = cellSize - (padding * 2);
+    
+    const image = images[this.level];
+    if (image) {
+      image.onload = () => {
+        ctx.drawImage(image, endX + padding, endY + padding, imageSize, imageSize);
+      };
+      // También intentamos dibujar inmediatamente en caso de que la imagen ya esté cargada
+      try {
+        ctx.drawImage(image, endX + padding, endY + padding, imageSize, imageSize);
+      } catch (e) {
+        // Si la imagen no está cargada, dibujamos un placeholder
+        ctx.fillStyle = '#0f0';
+        ctx.fillRect(endX + padding, endY + padding, imageSize, imageSize);
+      }
+    }
   }
-} 
+}

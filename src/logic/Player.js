@@ -1,4 +1,5 @@
 import { Coordinate } from './utils';
+import astroImg from '../assets/images/astro.webp';
 
 export default function Player(maze, ctx, cellSize, onComplete) {
   this.map = maze.mazeMap;
@@ -9,17 +10,31 @@ export default function Player(maze, ctx, cellSize, onComplete) {
   this.ctx = ctx;
   this.cellSize = cellSize;
   this.moves = 0;
+  
+  // Crear y precargar la imagen
+  const playerImage = new Image();
+  playerImage.src = astroImg;
 
   this.currentPos = new Coordinate(this.startCoord.x, this.startCoord.y);
 
   const drawPlayer = () => {
     const px = this.currentPos.y * this.cellSize + this.cellSize / 2;
     const py = this.currentPos.x * this.cellSize + this.cellSize / 2;
+    const size = this.cellSize * 0.6; // La imagen ocupará el 60% de la celda
 
-    this.ctx.beginPath();
-    this.ctx.fillStyle = 'yellow';
-    this.ctx.arc(px, py, this.cellSize / 3, 0, 2 * Math.PI);
-    this.ctx.fill();
+    // Centrar la imagen en la celda
+    const x = px - size / 2;
+    const y = py - size / 2;
+
+    if (playerImage.complete) {
+      this.ctx.drawImage(playerImage, x, y, size, size);
+    } else {
+      // Si la imagen no está cargada, dibujamos un círculo como fallback
+      this.ctx.beginPath();
+      this.ctx.fillStyle = 'yellow';
+      this.ctx.arc(px, py, this.cellSize / 3, 0, 2 * Math.PI);
+      this.ctx.fill();
+    }
   };
 
   const clearPlayer = () => {
@@ -71,5 +86,8 @@ export default function Player(maze, ctx, cellSize, onComplete) {
     };
   };
 
+  // Asegurarnos de que la imagen se dibuje cuando se cargue
+  playerImage.onload = drawPlayer;
+  // Intentar dibujar inmediatamente si la imagen ya está en caché
   drawPlayer();
 }
