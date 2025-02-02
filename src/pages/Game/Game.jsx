@@ -129,7 +129,25 @@ export default function Game() {
     canvasRef.current.width = minSide;
     canvasRef.current.height = minSide;
 
-    setCellSize(Math.floor(minSide / 10));
+    const dimension = getMazeDimensions(level);
+    setCellSize(Math.floor(minSide / dimension));
+
+    // Si el laberinto ya existe, redibujarlo con el nuevo tamaño
+    if (maze.current && drawer.current && player.current) {
+      const ctx = canvasRef.current.getContext('2d');
+      const newCellSize = Math.floor(minSide / dimension);
+      drawer.current = new DrawMaze(maze.current, ctx, newCellSize);
+      player.current = new Player(maze.current, ctx, newCellSize, handleMazeComplete);
+    }
+  };
+
+  const getMazeDimensions = (level) => {
+    switch(level) {
+      case 1: return 5;  // Fácil: 5x5
+      case 2: return 7;  // Medio: 7x7
+      case 3: return 10; // Difícil: 10x10
+      default: return 5;
+    }
   };
 
   const generateMaze = () => {
@@ -138,13 +156,15 @@ export default function Game() {
     setSecondsLeft(300); 
     setTime('05:00');
 
-    const newMaze = new MazeGenerator(10, 10, level);
+    const dimension = getMazeDimensions(level);
+    const newMaze = new MazeGenerator(dimension, dimension, level);
     const ctx = canvasRef.current.getContext('2d');
-    const newDrawer = new DrawMaze(newMaze, ctx, Math.floor(canvasRef.current.width / 10));
+    const cellSize = Math.floor(canvasRef.current.width / dimension);
+    const newDrawer = new DrawMaze(newMaze, ctx, cellSize);
     const newPlayer = new Player(
       newMaze,
       ctx,
-      Math.floor(canvasRef.current.width / 10),
+      cellSize,
       handleMazeComplete
     );
 
@@ -188,6 +208,7 @@ export default function Game() {
         break;
       case ' ': 
       case 'Enter':
+        e.preventDefault();
         const currentPos = player.current.getCurrentPosition();
         const nextMove = maze.current.getNextMove(currentPos);
         if (nextMove) {
@@ -209,6 +230,11 @@ export default function Game() {
   const announcePosition = (message) => {
     const announcement = document.getElementById('maze-announcement');
     if (announcement) {
+      // Limpiar el contenido anterior
+      announcement.textContent = '';
+      // Forzar un reflow para asegurar que el screen reader lo lea
+      void announcement.offsetWidth;
+      // Establecer el nuevo mensaje
       announcement.textContent = message;
     }
   };
@@ -240,15 +266,14 @@ export default function Game() {
             <div 
               id="maze-announcement" 
               className="sr-only" 
-              role="status" 
-              aria-live="polite"
+              aria-live="assertive"
+              aria-atomic="true"
             ></div>
             
             <div 
-              role="application"
               tabIndex={4}
               onKeyDown={handleMazeKeyDown}
-              aria-label="Bienvenido al laberinto. Usa las flechas del teclado para moverte. Presiona la barra espaciadora para recibir una pista de la siguiente dirección. IMPORTANTE: Debes continuar en la misma dirección hasta recibir una nueva pista diferente. "
+              aria-label="Laberinto. Usa las flechas del teclado para moverte. Presiona la barra espaciadora para recibir una pista de la siguiente dirección."
             >
               <MazeCanvas canvasRef={canvasRef} />
             </div>

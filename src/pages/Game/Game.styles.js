@@ -105,10 +105,10 @@ export const QuestionSection = styled.div`
 
 export const MazeContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  margin: 1rem 0;
+  align-items: center;
+  flex-grow: 1;
+  margin-top: 20px;
   position: relative;
 
   .sr-only {
@@ -123,17 +123,14 @@ export const MazeContainer = styled.div`
     border: 0;
   }
 
-  canvas {
-    border: 2px solid #2D3648;
-    border-radius: 8px;
+  div:focus {
+    outline: none;
   }
 
-  div[role="application"] {
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(45, 54, 72, 0.3);
-      border-radius: 8px;
-    }
+  canvas {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 `;
 

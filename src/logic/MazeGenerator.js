@@ -94,6 +94,15 @@ export default function MazeGenerator(width, height, level = 1) {
   };
 
   this.getNextMove = function(currentPos) {
+    if (!currentPos || typeof currentPos.row !== 'number' || typeof currentPos.col !== 'number') {
+      return 'Posición no válida';
+    }
+
+    // Si ya estamos en el final
+    if (currentPos.row === this.endCoord.x && currentPos.col === this.endCoord.y) {
+      return 'Has llegado al final del laberinto';
+    }
+
     // Usar BFS para encontrar el camino más corto al final
     const queue = [{
       pos: { row: currentPos.row, col: currentPos.col },
@@ -110,6 +119,10 @@ export default function MazeGenerator(width, height, level = 1) {
       
       // Si llegamos al final, retornamos el primer movimiento del camino
       if (current.pos.row === this.endCoord.x && current.pos.col === this.endCoord.y) {
+        if (current.path.length === 0) {
+          return 'Ya estás en el final del laberinto';
+        }
+        
         // Traducir la dirección al español para el anuncio
         const direction = current.path[0];
         const translations = {
@@ -118,31 +131,34 @@ export default function MazeGenerator(width, height, level = 1) {
           'left': 'Izquierda',
           'right': 'Derecha'
         };
-        return translations[direction] || direction;
+        return translations[direction] || 'Dirección no válida';
       }
       
       const cell = this.mazeMap[current.pos.row][current.pos.col];
       
+      // Verificar que la celda existe
+      if (!cell) continue;
+      
       // Agregar todos los movimientos posibles usando las direcciones en inglés
-      if (cell.n) {
+      if (cell.n && current.pos.row > 0) {
         queue.push({
           pos: { row: current.pos.row - 1, col: current.pos.col },
           path: [...current.path, 'up']
         });
       }
-      if (cell.s) {
+      if (cell.s && current.pos.row < this.height - 1) {
         queue.push({
           pos: { row: current.pos.row + 1, col: current.pos.col },
           path: [...current.path, 'down']
         });
       }
-      if (cell.w) {
+      if (cell.w && current.pos.col > 0) {
         queue.push({
           pos: { row: current.pos.row, col: current.pos.col - 1 },
           path: [...current.path, 'left']
         });
       }
-      if (cell.e) {
+      if (cell.e && current.pos.col < this.width - 1) {
         queue.push({
           pos: { row: current.pos.row, col: current.pos.col + 1 },
           path: [...current.path, 'right']
@@ -150,7 +166,7 @@ export default function MazeGenerator(width, height, level = 1) {
       }
     }
     
-    return null;
+    return 'No hay camino disponible al final del laberinto';
   };
 
   this.initMap();
